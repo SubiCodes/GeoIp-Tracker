@@ -101,3 +101,13 @@ export const validateUserCookie = async (req, res) => {
         return res.status(401).json({ success: false, message: "Invalid or expired token" });
     };
 };
+
+export const signOut = (req, res) => {
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'none',
+        domain: process.env.FRONTEND_URI || 'http://localhost:5173',
+    });
+    return res.status(200).json({ success: true, message: "Signed out successfully" });
+};
