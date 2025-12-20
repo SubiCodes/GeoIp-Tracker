@@ -158,7 +158,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             </div>
 
             {/* Coordinates decoration with background */}
-            <div className="pt-8 space-y-2 text-xs font-mono bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm">
+            {/* <div className="pt-8 space-y-2 text-xs font-mono bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm w-max">
               <div className="flex items-center gap-3 text-muted-foreground w-max">
                 <span className="opacity-60 min-w-[4rem]">LAT:</span>
                 <span className="font-semibold">14.6760° N</span>
@@ -175,7 +175,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                 <span className="opacity-60 min-w-[4rem]">REGION:</span>
                 <span className="font-semibold">Central Luzon, PH</span>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
