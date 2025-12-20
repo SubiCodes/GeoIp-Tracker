@@ -24,31 +24,32 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   return (
     <div className="min-h-screen flex bg-background relative">
       {/* Mobile Background Map - Full screen behind content */}
-      <div className="lg:hidden absolute inset-0 overflow-hidden">
-        <div className="absolute inset-0 opacity-90">
-          <MapContainer
-            center={position}
-            zoom={11}
-            zoomControl={false}
-            dragging={false}
-            scrollWheelZoom={false}
-            doubleClickZoom={false}
-            style={{ height: '100%', width: '100%', filter: 'saturate(0.5)' }}
-            attributionControl={false}
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-          </MapContainer>
-        </div>
-        <div className="absolute inset-0 from-background/95 via-background/90 to-background/95" />
+      <div className="lg:hidden absolute inset-0 overflow-hidden z-0">
+        <MapContainer
+          center={position}
+          zoom={12}
+          zoomControl={false}
+          dragging={false}
+          scrollWheelZoom={false}
+          doubleClickZoom={false}
+          style={{ height: '100%', width: '100%' }}
+          attributionControl={false}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          <Marker position={position}>
+            <Popup>Balanga, Central Luzon, Philippines</Popup>
+          </Marker>
+        </MapContainer>
+        <div className="absolute inset-0 bg-gradient-to-b from-background/90 via-background/85 to-background/90" />
       </div>
 
       {/* Left Panel - Map themed branding section (Desktop) */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-muted/30 border-r">
         {/* React Leaflet Map Background */}
-        <div className="absolute inset-0 opacity-70">
+        <div className="absolute inset-0">
           <MapContainer
             center={position}
             zoom={12}
@@ -56,7 +57,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             dragging={false}
             scrollWheelZoom={false}
             doubleClickZoom={false}
-            style={{ height: '100%', width: '100%', filter: 'saturate(0.7)' }}
+            style={{ height: '100%', width: '100%' }}
             attributionControl={false}
           >
             <TileLayer
@@ -68,9 +69,6 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             </Marker>
           </MapContainer>
         </div>
-
-        {/* Gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/60 to-background/50" />
 
         {/* Animated location pins with glow effect */}
         <div className="absolute top-1/4 left-1/3 animate-pulse">
@@ -96,27 +94,27 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }}>
           <defs>
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="currentColor" stopOpacity="0" className="text-primary"/>
-              <stop offset="50%" stopColor="currentColor" stopOpacity="0.3" className="text-primary"/>
-              <stop offset="100%" stopColor="currentColor" stopOpacity="0" className="text-primary"/>
+              <stop offset="0%" stopColor="currentColor" stopOpacity="0" className="text-primary" />
+              <stop offset="50%" stopColor="currentColor" stopOpacity="0.3" className="text-primary" />
+              <stop offset="100%" stopColor="currentColor" stopOpacity="0" className="text-primary" />
             </linearGradient>
           </defs>
           <line x1="33%" y1="25%" x2="25%" y2="50%" stroke="url(#lineGradient)" strokeWidth="2" strokeDasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite" />
           </line>
           <line x1="33%" y1="25%" x2="66%" y2="66%" stroke="url(#lineGradient)" strokeWidth="2" strokeDasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite"/>
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite" />
           </line>
           <line x1="25%" y1="50%" x2="66%" y2="66%" stroke="url(#lineGradient)" strokeWidth="2" strokeDasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2.5s" repeatCount="indefinite"/>
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2.5s" repeatCount="indefinite" />
           </line>
         </svg>
 
         {/* Content overlay */}
-        <div className="relative z-1 flex flex-col justify-center px-12 py-12">
+        <div className="relative z-10 flex flex-col justify-center px-12 py-12">
           <div className="space-y-6">
             {/* Logo/Brand section */}
-            <div className="flex items-center gap-3 bg-white md:bg-transparent bg-opacity-20 md:bg-opacity-0 px-4 py-2 rounded-md w-max">
+            <div className="flex items-center gap-3 bg-white py-4 px-6 rounded-2xl border-primary/20 shadow-md w-max">
               <div className="relative">
                 <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-40 scale-150" />
                 <Globe className="w-12 h-12 text-primary relative z-10 drop-shadow-lg" />
@@ -187,16 +185,17 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <div className="w-full max-w-md">
           {/* Mobile branding header */}
           <div className="lg:hidden mb-8 text-center">
-            <div className="flex items-center justify-center gap-2 mb-2">
-              <div className="relative">
-                <div className="absolute inset-0 bg-primary rounded-full blur-xl opacity-40 scale-150" />
-                <Globe className="w-8 h-8 text-primary relative z-10 drop-shadow-lg" />
+            <div className="flex flex-row items-center justify-center gap-3 mb-4 bg-white py-5 px-7 rounded-2xl border border-primary/15 shadow-lg mx-auto w-max min-w-[220px]">
+              <div className="relative flex-shrink-0">
+                <div className="absolute inset-0 bg-primary rounded-full blur-2xl opacity-30 scale-150" />
+                <Globe className="w-10 h-10 text-primary relative z-10 drop-shadow-lg" />
               </div>
-              <h1 className="text-2xl font-bold tracking-tight">GeoIP Tracker</h1>
+              <div className="text-left">
+                <h1 className="text-2xl font-extrabold tracking-tight leading-snug text-primary">GeoIP Tracker</h1>
+                <p className="text-sm text-muted-foreground mt-1">Location Intelligence Platform</p>
+              </div>
             </div>
-            <p className="text-sm text-muted-foreground">Location Intelligence Platform</p>
           </div>
-
           {children}
         </div>
       </div>
