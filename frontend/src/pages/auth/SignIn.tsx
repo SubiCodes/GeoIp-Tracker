@@ -3,10 +3,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import useUserAuthStore from '@/store/user-authStore';
 
 const SignIn: React.FC = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const siginUser = useUserAuthStore((state) => state.sigInUser);
+    const signingInUser = useUserAuthStore((state) => state.signingInUser);
+    const signInError = useUserAuthStore((state) => state.signInError);
 
     const handleSubmit = () => {
         // Handle sign in logic here
