@@ -4,18 +4,30 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import useUserAuthStore from '@/store/user-authStore';
+import { BeatLoader } from "react-spinners";
+import { useNavigate } from 'react-router-dom';
 
 const SignIn: React.FC = () => {
+    const navigate = useNavigate();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
     const siginUser = useUserAuthStore((state) => state.sigInUser);
     const signingInUser = useUserAuthStore((state) => state.signingInUser);
     const signInError = useUserAuthStore((state) => state.signInError);
 
-    const handleSubmit = () => {
-        // Handle sign in logic here
-        console.log('Sign in:', { email, password });
+    const handleSubmit = async () => {
+        setError(null);
+        if (email.trim() === '' || password.trim() === '') {
+            setError("Email and password are required");
+            return;
+        }
+        await siginUser(email, password, navigate);
+        if (signInError) {
+            setError(signInError);
+        }
     };
 
     return (
@@ -55,9 +67,14 @@ const SignIn: React.FC = () => {
                         onChange={(e) => setPassword(e.target.value)}
                     />
                 </div>
-                <Button onClick={handleSubmit} className="w-full">
-                    Sign in
+                <Button onClick={handleSubmit} className="w-full" disabled={signingInUser}>
+                    {signingInUser ? <BeatLoader size={12} color="#fff" /> : 'Sign in'}
                 </Button>
+                {error && (
+                    <div className="mt-2 text-sm text-red-600 bg-red-100 rounded px-3 py-2">
+                        {error}
+                    </div>
+                )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
                 <div className="text-sm text-muted-foreground text-center">
