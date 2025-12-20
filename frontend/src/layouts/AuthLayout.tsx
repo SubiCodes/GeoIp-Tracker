@@ -1,48 +1,54 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { MapPin, Globe, Navigation } from 'lucide-react';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+// Fix for default marker icons in React Leaflet
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
 
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+  // Coordinates for Balanga, Central Luzon, Philippines
+  const position: [number, number] = [14.6760, 121.0437];
+
   return (
     <div className="min-h-screen flex bg-background">
       {/* Left Panel - Map themed branding section */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-muted/30 border-r">
-        {/* Stylized Map Background - SVG */}
-        <svg className="absolute inset-0 w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <pattern id="smallGrid" width="20" height="20" patternUnits="userSpaceOnUse">
-              <path d="M 20 0 L 0 0 0 20" fill="none" stroke="currentColor" strokeWidth="0.3" className="text-border" opacity="0.3" />
-            </pattern>
-            <pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse">
-              <rect width="100" height="100" fill="url(#smallGrid)" />
-              <path d="M 100 0 L 0 0 0 100" fill="none" stroke="currentColor" strokeWidth="1" className="text-border" opacity="0.5" />
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#grid)" />
-
-          {/* Abstract landmass shapes */}
-          <g className="text-muted-foreground" opacity="0.15">
-            <path d="M 100 200 Q 150 180 200 200 L 220 250 Q 200 270 180 260 L 150 280 Q 120 260 100 250 Z" fill="currentColor" />
-            <path d="M 300 150 Q 350 140 380 160 L 400 200 Q 380 220 360 210 L 330 230 Q 310 210 300 190 Z" fill="currentColor" />
-            <ellipse cx="500" cy="400" rx="80" ry="60" fill="currentColor" />
-            <path d="M 600 300 Q 650 290 680 310 L 700 350 Q 680 370 660 360 L 630 380 Q 610 360 600 340 Z" fill="currentColor" />
-            <path d="M 200 500 Q 250 490 280 510 L 300 560 Q 280 580 260 570 L 230 590 Q 210 570 200 550 Z" fill="currentColor" />
-            <ellipse cx="450" cy="600" rx="70" ry="50" fill="currentColor" />
-          </g>
-
-          {/* Route/path lines */}
-          <g className="text-primary" opacity="0.2" stroke="currentColor" strokeWidth="2" fill="none" strokeDasharray="5,5">
-            <path d="M 150 250 Q 300 200 450 300" />
-            <path d="M 450 300 Q 550 350 600 330" />
-            <path d="M 300 200 Q 400 250 500 200" />
-          </g>
-        </svg>
+        {/* React Leaflet Map Background */}
+        <div className="absolute inset-0 opacity-99">
+          <MapContainer
+            center={position}
+            zoom={12}
+            zoomControl={false}
+            dragging={false}
+            scrollWheelZoom={false}
+            doubleClickZoom={false}
+            style={{ height: '100%', width: '100%', filter: '' }}
+            attributionControl={false}
+          >
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            />
+            <Marker position={position}>
+              <Popup>Balanga, Central Luzon, Philippines</Popup>
+            </Marker>
+          </MapContainer>
+        </div>
 
         {/* Gradient overlay for better text readability */}
-        <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-background/85 to-background/75" />
+        <div className="absolute inset-0 bg-gradient-to-br from-background/80 via-background/60 to-background/50" />
 
         {/* Animated location pins with glow effect */}
         <div className="absolute top-1/4 left-1/3 animate-pulse">
@@ -68,19 +74,19 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 5 }}>
           <defs>
             <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="currentColor" stopOpacity="0" className="text-primary" />
-              <stop offset="50%" stopColor="currentColor" stopOpacity="0.3" className="text-primary" />
-              <stop offset="100%" stopColor="currentColor" stopOpacity="0" className="text-primary" />
+              <stop offset="0%" stopColor="currentColor" stopOpacity="0" className="text-primary"/>
+              <stop offset="50%" stopColor="currentColor" stopOpacity="0.3" className="text-primary"/>
+              <stop offset="100%" stopColor="currentColor" stopOpacity="0" className="text-primary"/>
             </linearGradient>
           </defs>
           <line x1="33%" y1="25%" x2="25%" y2="50%" stroke="url(#lineGradient)" strokeWidth="2" strokeDasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite" />
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite"/>
           </line>
           <line x1="33%" y1="25%" x2="66%" y2="66%" stroke="url(#lineGradient)" strokeWidth="2" strokeDasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite" />
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2s" repeatCount="indefinite"/>
           </line>
           <line x1="25%" y1="50%" x2="66%" y2="66%" stroke="url(#lineGradient)" strokeWidth="2" strokeDasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2.5s" repeatCount="indefinite" />
+            <animate attributeName="stroke-dashoffset" from="0" to="24" dur="2.5s" repeatCount="indefinite"/>
           </line>
         </svg>
 
