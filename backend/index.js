@@ -8,7 +8,10 @@ dotenv.config();
 
 const app = express();
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: [(process.env.FRONTEND_URI || 'http://localhost:5173'), 'http://localhost:3000'],
+    credentials: true
+}));
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'GeoIP-Tracker backend running' });
