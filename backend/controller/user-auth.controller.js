@@ -194,17 +194,28 @@ export const validateUserCookie = async (req, res) => {
 };
 
 export const signOut = (req, res) => {
-    res.clearCookie('token', {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'none',
-        domain: process.env.FRONTEND_URI || 'localhost',
-    });
-    return res.status(200).json({
-        success: true,
-        message: {
-            title: "Signed out",
-            suggestion: "You have been signed out successfully."
-        }
-    });
+    try {
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            domain: process.env.FRONTEND_URI || 'localhost',
+        });
+        return res.status(200).json({
+            success: true,
+            message: {
+                title: "Signed out",
+                suggestion: "You have been signed out successfully."
+            }
+        });
+    } catch (error) {
+        console.error("Error in Signout", error);
+        return res.status(500).json({
+            success: false,
+            message: {
+                title: "Signout failed",
+                suggestion: "Something went wrong while signing out. Please try again."
+            }
+        });
+    }
 };
