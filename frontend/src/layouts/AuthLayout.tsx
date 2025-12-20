@@ -49,7 +49,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
       {/* Left Panel - Map themed branding section (Desktop) */}
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-muted/30 border-r">
         {/* React Leaflet Map Background */}
-        <div className="absolute inset-0">
+        <div className="absolute inset-0 z-0">
           <MapContainer
             center={position}
             zoom={12}
@@ -111,7 +111,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         </svg>
 
         {/* Content overlay */}
-        <div className="relative z-10 flex flex-col justify-center px-12 py-12">
+        <div className="absolute inset-0 z-10 flex flex-col justify-center px-12 py-12">
           <div className="space-y-6">
             {/* Logo/Brand section */}
             <div className="flex items-center gap-3 bg-white py-4 px-6 rounded-2xl border-primary/20 shadow-md w-max">
@@ -128,7 +128,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
 
             {/* Feature highlights */}
             <div className="space-y-4 pt-8">
-              <div className="flex items-start gap-3 bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm transition-all hover:shadow-md hover:bg-card/90">
+              <div className="flex items-start gap-3 bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm transition-all hover:shadow-md hover:bg-card/90 w-max">
                 <div className="mt-1 p-2 rounded-md bg-primary/10 ring-1 ring-primary/20">
                   <MapPin className="w-4 h-4 text-primary" />
                 </div>
@@ -137,7 +137,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                   <p className="text-sm text-muted-foreground">Track IP addresses with accuracy down to city-level coordinates</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm transition-all hover:shadow-md hover:bg-card/90">
+              <div className="flex items-start gap-3 bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm transition-all hover:shadow-md hover:bg-card/90 w-max">
                 <div className="mt-1 p-2 rounded-md bg-primary/10 ring-1 ring-primary/20">
                   <Globe className="w-4 h-4 text-primary" />
                 </div>
@@ -146,7 +146,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
                   <p className="text-sm text-muted-foreground">Access location data from IP addresses worldwide</p>
                 </div>
               </div>
-              <div className="flex items-start gap-3 bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm transition-all hover:shadow-md hover:bg-card/90">
+              <div className="flex items-start gap-3 bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm transition-all hover:shadow-md hover:bg-card/90 w-max">
                 <div className="mt-1 p-2 rounded-md bg-primary/10 ring-1 ring-primary/20">
                   <Navigation className="w-4 h-4 text-primary" />
                 </div>
@@ -159,7 +159,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
 
             {/* Coordinates decoration with background */}
             <div className="pt-8 space-y-2 text-xs font-mono bg-card/80 backdrop-blur-md p-4 rounded-lg border shadow-sm">
-              <div className="flex items-center gap-3 text-muted-foreground">
+              <div className="flex items-center gap-3 text-muted-foreground w-max">
                 <span className="opacity-60 min-w-[4rem]">LAT:</span>
                 <span className="font-semibold">14.6760° N</span>
               </div>
