@@ -1,4 +1,4 @@
-require('dotenv').config();
+    require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
@@ -29,7 +29,7 @@ async function start() {
   } else {
     console.log('No MONGO_URI provided — skipping DB connection');
   }
-
+``
   app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
   });
