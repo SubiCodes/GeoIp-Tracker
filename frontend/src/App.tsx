@@ -3,6 +3,7 @@ import AuthLayout from './layouts/AuthLayout';
 import MainLayout from './layouts/MainLayout';
 import SignIn from './pages/auth/SignIn';
 import SignUp from './pages/auth/SignUp';
+import Home from './pages/main/Home';
 // import SignIn from './pages/SignIn';
 // import SignUp from './pages/SignUp';
 
@@ -17,7 +18,7 @@ function App() {
         </Route>
 
         <Route element={<MainLayout><Outlet /></MainLayout>}>
-          <Route path="/home" element={<div>Home Placeholder</div>} />
+          <Route path="/home" element={<Home />} />
           <Route path="/history" element={<div>History Placeholder</div>} />
         </Route>
 

@@ -20,7 +20,7 @@ interface UserAuthState {
     signingInUser: boolean,
     sigInUser: (email: string, password: string, navigate: (path: string) => void) => Promise<void>,
     signInError?: string | null,
-    logoutUser: (navigate: (path: string) => void) => void,
+    signoutUser: (navigate: (path: string) => void) => void,
 }
 
 const useUserAuthStore = create<UserAuthState>((set) => ({
@@ -66,11 +66,11 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
         }
     },
     signInError: null,
-    logoutUser: async (navigate: (path: string) => void) => {
+    signoutUser: async (navigate: (path: string) => void) => {
         set({ user: null });
         try {
-            await api.post('/auth/logout');
-            navigate('/signin');
+            await api.post('/auth/signout');
+            navigate('/');
         } catch (error) {
             console.error('Logout error:', error);
         }
