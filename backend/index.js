@@ -4,6 +4,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import cookieParser from "cookie-parser";
+import userAuthRouter from './route/user-auth.route.js';
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use(cors({
     origin: [(process.env.FRONTEND_URI || 'http://localhost:5173'), 'http://localhost:3000'],
     credentials: true
 }));
+
+app.use('/auth', userAuthRouter);
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'GeoIP-Tracker backend running' });
