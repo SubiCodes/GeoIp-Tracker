@@ -45,3 +45,41 @@ export const signUp = async (req, res) => {
         return res.status(500).json({ success: false, message: `Error Signing up: ${error}` });
     }
 };
+
+export const signIn = async (req, res) => {
+    const { email, password } = req.body;
+    try {
+        // Find user by email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(401).json({ success: false, message: "Invalid email or password" });
+        }
+
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: "Invalid email or password" });
+        }
+
+        // Generate JWT
+        const token = jwt.sign(
+            { userId: user.userId, email: user.email },
+            process.env.JWT_SECRET || 'your_jwt_secret',
+            { expiresIn: '7d' }
+        );
+
+        // Set cookie
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            domain: process.env.FRONTEND_URI || 'http://localhost:5173',
+            maxAge: 7 * 24 * 60 * 60 * 1000
+        });
+
+        return res.status(200).json({ success: true, message: "Signed in successfully", data: { email: user.email, userId: user.userId } });
+    } catch (error) {
+        console.error("Error in Signin", error);
+        return res.status(500).json({ success: false, message: `Error Signing in: ${error}` });
+    }
+};
