@@ -1,5 +1,6 @@
 import User from "../models/user.model";
 import bcrypt from "bcrypt";
+import { v4 as uuidv4 } from 'uuid';
 
 export const signUp = async (req, res) => {
     const { email, password } = req.body;
@@ -10,12 +11,15 @@ export const signUp = async (req, res) => {
             return res.status(409).json({ success: false, message: "User already has an account." });
         }
 
+        // Create a unique userId
+        const userId = uuidv4();
+
         // Hash the password
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // Create the user
-        const user = await User.create({ email, password: hashedPassword, userId: email });
+        const user = await User.create({ email, password: hashedPassword, userId });
 
         // Return user data excluding password
         return res.status(201).json({ success: true, message: "User created successfully", data: { email: user.email, userId: user.userId } });
