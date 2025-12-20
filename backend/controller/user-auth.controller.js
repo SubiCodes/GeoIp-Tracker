@@ -9,7 +9,13 @@ export const signUp = async (req, res) => {
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(409).json({ success: false, message: "User already has an account." });
+            return res.status(409).json({
+                success: false,
+                message: {
+                    title: "Registration failed",
+                    suggestion: "User already has an account. Please sign in or use a different email."
+                }
+            });
         }
 
         // Create a unique userId
@@ -39,10 +45,23 @@ export const signUp = async (req, res) => {
         });
 
         // Return user data excluding password
-        return res.status(201).json({ success: true, message: "User created successfully", data: { email: user.email, userId: user.userId } });
+        return res.status(201).json({
+            success: true,
+            message: {
+                title: "Registration successful",
+                suggestion: "Your account has been created. Welcome!"
+            },
+            data: { email: user.email, userId: user.userId }
+        });
     } catch (error) {
         console.error("Error in Signup", error);
-        return res.status(500).json({ success: false, message: `Error Signing up: ${error}` });
+        return res.status(500).json({
+            success: false,
+            message: {
+                title: "Server error",
+                suggestion: "Something went wrong. Please try again later."
+            }
+        });
     };
 };
 
@@ -52,13 +71,25 @@ export const signIn = async (req, res) => {
         // Find user by email
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({ success: false, message: "Invalid email or password" });
+            return res.status(401).json({
+                success: false,
+                message: {
+                    title: "Login failed",
+                    suggestion: "Wrong email or password. Please try again."
+                }
+            });
         }
 
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ success: false, message: "Invalid email or password" });
+            return res.status(401).json({
+                success: false,
+                message: {
+                    title: "Login failed",
+                    suggestion: "Wrong email or password. Please try again."
+                }
+            });
         }
 
         // Generate JWT
@@ -77,29 +108,67 @@ export const signIn = async (req, res) => {
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
-        return res.status(200).json({ success: true, message: "Signed in successfully", data: { email: user.email, userId: user.userId } });
+        return res.status(200).json({
+            success: true,
+            message: {
+                title: "Login successful",
+                suggestion: "Welcome back!"
+            },
+            data: { email: user.email, userId: user.userId }
+        });
     } catch (error) {
         console.error("Error in Signin", error);
-        return res.status(500).json({ success: false, message: `Error Signing in: ${error}` });
-    };
+        return res.status(500).json({
+            success: false,
+            message: {
+                title: "Server error",
+                suggestion: "Something went wrong. Please try again later."
+            }
+        });
+    }
 };
 
 export const validateUserCookie = async (req, res) => {
     try {
         const token = req.cookies.token;
         if (!token) {
-            return res.status(401).json({ success: false, message: "No authentication token found" });
-        };
+            return res.status(401).json({
+                success: false,
+                message: {
+                    title: "Authentication failed",
+                    suggestion: "No authentication token found. Please sign in."
+                }
+            });
+        }
         const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
         // Check if user still exists in DB
         const user = await User.findOne({ userId: decoded.userId });
         if (!user) {
-            return res.status(401).json({ success: false, message: "User does not exist" });
-        };
-        return res.status(200).json({ success: true, message: "Token valid", data: decoded });
+            return res.status(401).json({
+                success: false,
+                message: {
+                    title: "Authentication failed",
+                    suggestion: "User does not exist. Please sign in again."
+                }
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: {
+                title: "Token valid",
+                suggestion: "User is authenticated."
+            },
+            data: decoded
+        });
     } catch (error) {
-        return res.status(401).json({ success: false, message: "Invalid or expired token" });
-    };
+        return res.status(401).json({
+            success: false,
+            message: {
+                title: "Authentication failed",
+                suggestion: "Invalid or expired token. Please sign in again."
+            }
+        });
+    }
 };
 
 export const signOut = (req, res) => {
@@ -109,5 +178,11 @@ export const signOut = (req, res) => {
         sameSite: 'none',
         domain: process.env.FRONTEND_URI || 'http://localhost:5173',
     });
-    return res.status(200).json({ success: true, message: "Signed out successfully" });
+    return res.status(200).json({
+        success: true,
+        message: {
+            title: "Signed out",
+            suggestion: "You have been signed out successfully."
+        }
+    });
 };
