@@ -18,7 +18,7 @@ interface UserAuthState {
     validatingUser: boolean,
     validateUser: (navigate: (path: string) => void) => Promise<void>,
     signingInUser: boolean,
-    sigInUser: (email: string, password: string) => Promise<void>,
+    sigInUser: (email: string, password: string, navigate: (path: string) => void) => Promise<void>,
     signInError?: string | null,
 }
 
@@ -41,12 +41,13 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
         }
     },
     signingInUser: false,
-    sigInUser: async (email: string, password: string) => {
+    sigInUser: async (email: string, password: string, navigate: (path: string) => void) => {
         set({ signingInUser: true, user: null, signInError: null });
         try {
             const res = await api.post('/auth/signin', { email, password });
             if (res.data && res.data.success && res.data.data) {
                 set({ user: res.data.data, signInError: null });
+                navigate('/home');
             } else {
                 set({ user: null, signInError: res.data?.message?.title || "Login failed" });
             }
