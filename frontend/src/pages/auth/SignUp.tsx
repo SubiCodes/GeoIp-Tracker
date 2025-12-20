@@ -1,8 +1,8 @@
-import { useState } from "react";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 
 const SignUp: React.FC = () => {
     const [name, setName] = useState('');
@@ -81,7 +81,7 @@ const SignUp: React.FC = () => {
             <CardFooter className="flex flex-col space-y-4">
                 <div className="text-sm text-muted-foreground text-center">
                     Already have an account?{' '}
-                    <a href="/" className="text-primary hover:underline font-medium">
+                    <a href="#" className="text-primary hover:underline font-medium">
                         Sign in
                     </a>
                 </div>
@@ -100,5 +100,4 @@ const SignUp: React.FC = () => {
     );
 };
 
-
-export default SignUp
+export default SignUp;
