@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { MapPin, Globe, Navigation } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
+import useUserAuthStore from '@/store/user-authStore';
 
 // Fix for default marker icons in React Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -18,6 +19,13 @@ interface AuthLayoutProps {
 }
 
 const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
+
+  const validateUser = useUserAuthStore((state) => state.validateUser);
+
+  React.useEffect(() => {
+    validateUser();
+  }, []);
+
   // Coordinates for Balanga, Central Luzon, Philippines
   const position: [number, number] = [14.6760, 121.0437];
 
@@ -57,7 +65,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
             dragging={false}
             scrollWheelZoom={false}
             doubleClickZoom={false}
-            style={{ height: '100%', width: '100%'}}
+            style={{ height: '100%', width: '100%' }}
             attributionControl={false}
           >
             <TileLayer

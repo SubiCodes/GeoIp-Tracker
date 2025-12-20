@@ -1,9 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { create } from 'zustand'
 import axios from 'axios'
-import { toast } from "sonner";
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL ||'http://localhost:3000/',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/',
     withCredentials: true,
 });
 
@@ -25,25 +25,14 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
     validateUser: async () => {
         set({ validatingUser: true, user: null });
         try {
-            const res = await api.get('/auth/validate-user');
+            const res = await api.get('/auth/validate-cookie');
             if (res.data && res.data.success && res.data.data) {
                 set({ user: res.data.data });
             } else {
                 set({ user: null });
-                toast.error(res.data?.message?.title || "Validation failed", {
-                    description: res.data?.message?.suggestion || "Could not validate user."
-                });
             }
-        } catch (error) {
+        } catch (e) {
             set({ user: null });
-            if (axios.isAxiosError(error)) {
-                const msg = error.response?.data?.message;
-                toast.error(msg?.title || "Validation failed", {
-                    description: msg?.suggestion || error.message
-                });
-            } else {
-                toast.error("Validation failed", { description: (error as Error).message });
-            }
         } finally {
             set({ validatingUser: false });
         }
