@@ -43,7 +43,7 @@ export const signUp = async (req, res) => {
     } catch (error) {
         console.error("Error in Signup", error);
         return res.status(500).json({ success: false, message: `Error Signing up: ${error}` });
-    }
+    };
 };
 
 export const signIn = async (req, res) => {
@@ -81,5 +81,23 @@ export const signIn = async (req, res) => {
     } catch (error) {
         console.error("Error in Signin", error);
         return res.status(500).json({ success: false, message: `Error Signing in: ${error}` });
-    }
+    };
+};
+
+export const validateUserCookie = async (req, res) => {
+    try {
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ success: false, message: "No authentication token found" });
+        };
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
+        // Check if user still exists in DB
+        const user = await User.findOne({ userId: decoded.userId });
+        if (!user) {
+            return res.status(401).json({ success: false, message: "User does not exist" });
+        };
+        return res.status(200).json({ success: true, message: "Token valid", data: decoded });
+    } catch (error) {
+        return res.status(401).json({ success: false, message: "Invalid or expired token" });
+    };
 };
