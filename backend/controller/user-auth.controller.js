@@ -62,7 +62,7 @@ export const signUp = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            domain: process.env.FRONTEND_URI || 'http://localhost:5173',
+            domain: process.env.FRONTEND_URI || 'localhost',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -126,7 +126,7 @@ export const signIn = async (req, res) => {
             httpOnly: true,
             secure: true,
             sameSite: 'none',
-            domain: process.env.FRONTEND_URI || 'http://localhost:5173',
+            domain: process.env.FRONTEND_URI || 'localhost',
             maxAge: 7 * 24 * 60 * 60 * 1000
         });
 
@@ -198,7 +198,7 @@ export const signOut = (req, res) => {
         httpOnly: true,
         secure: true,
         sameSite: 'none',
-        domain: process.env.FRONTEND_URI || 'http://localhost:5173',
+        domain: process.env.FRONTEND_URI || 'localhost',
     });
     return res.status(200).json({
         success: true,
