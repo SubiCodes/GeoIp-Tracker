@@ -17,6 +17,9 @@ interface UserAuthState {
     user: User | null,
     validatingUser: boolean,
     validateUser: () => Promise<void>,
+    signingInUser: boolean,
+    sigInUser: (email: string, password: string) => Promise<void>,
+    signInError?: string | null,
 }
 
 const useUserAuthStore = create<UserAuthState>((set) => ({
@@ -36,7 +39,30 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
         } finally {
             set({ validatingUser: false });
         }
-    }
+    },
+    signingInUser: false,
+    sigInUser: async (email: string, password: string) => {
+        set({ signingInUser: true, user: null, signInError: null });
+        try {
+            const res = await api.post('/auth/signin', { email, password });
+            if (res.data && res.data.success && res.data.data) {
+                set({ user: res.data.data, signInError: null });
+            } else {
+                set({ user: null, signInError: res.data?.message?.title || "Login failed" });
+            }
+        } catch (error) {
+            set({ user: null });
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                set({ signInError: msg?.title || "Login failed" });
+            } else {
+                set({ signInError: (error as Error).message || "Login failed" });
+            }
+        } finally {
+            set({ signingInUser: false });
+        }
+    },
+    signInError: null,
 }));
 
 export default useUserAuthStore;
