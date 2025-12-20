@@ -5,6 +5,28 @@ import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
     const { email, password } = req.body;
+    // Email validation
+    const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({
+            success: false,
+            message: {
+                title: "Invalid email",
+                suggestion: "Please enter a valid email address."
+            }
+        });
+    }
+    // Password validation: alphanumeric, 8+ chars, no special symbols or spaces
+    const passwordRegex = /^[A-Za-z0-9]{8,}$/;
+    if (!passwordRegex.test(password)) {
+        return res.status(400).json({
+            success: false,
+            message: {
+                title: "Invalid password",
+                suggestion: "Password must be at least 8 characters, alphanumeric, and contain no spaces or special symbols."
+            }
+        });
+    }
     try {
         // Check if user already exists
         const existingUser = await User.findOne({ email });
