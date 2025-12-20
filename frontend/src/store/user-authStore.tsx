@@ -31,6 +31,7 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
             const res = await api.get('/auth/validate-cookie');
             if (res.data && res.data.success && res.data.data) {
                 set({ user: res.data.data });
+                navigate('/home');
             } else {
                 set({ user: null });
             }
