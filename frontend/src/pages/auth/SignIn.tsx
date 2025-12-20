@@ -57,7 +57,7 @@ const SignIn: React.FC = () => {
             <CardFooter className="flex flex-col space-y-4">
                 <div className="text-sm text-muted-foreground text-center">
                     Don't have an account?{' '}
-                    <a href="#" className="text-primary hover:underline font-medium">
+                    <a href="/signup" className="text-primary hover:underline font-medium">
                         Sign up
                     </a>
                 </div>
