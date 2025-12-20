@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import jwt from "jsonwebtoken";
 
 export const signUp = async (req, res) => {
-    const { email, password } = req.body;
+    const { userName, email, password } = req.body;
     // Email validation
     const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     if (!emailRegex.test(email)) {
@@ -48,7 +48,7 @@ export const signUp = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         // Create the user
-        const user = await User.create({ email, password: hashedPassword, userId });
+        const user = await User.create({ userName, email, password: hashedPassword, userId });
 
         // Generate JWT
         const token = jwt.sign(
@@ -73,7 +73,7 @@ export const signUp = async (req, res) => {
                 title: "Registration successful",
                 suggestion: "Your account has been created. Welcome!"
             },
-            data: { email: user.email, userId: user.userId }
+            data: { userName: user.userName, email: user.email, userId: user.userId }
         });
     } catch (error) {
         console.error("Error in Signup", error);
@@ -136,7 +136,7 @@ export const signIn = async (req, res) => {
                 title: "Login successful",
                 suggestion: "Welcome back!"
             },
-            data: { email: user.email, userId: user.userId }
+            data: { userName: user.userName, email: user.email, userId: user.userId }
         });
     } catch (error) {
         console.error("Error in Signin", error);
