@@ -28,23 +28,27 @@ function generateCloseIP(ip) {
 
 /**
  * Get N working IP close matches for a user query using ipwho.is
- * Returns the full ipwho.is data for each IP
+ * Runs API calls in parallel for speed
  */
-export async function getWorkingCloseMatches(ip, count = 5, maxAttempts = 50) {
+export async function getWorkingCloseMatches(ip, count = 5, maxAttempts = 50, parallelBatch = 5) {
   const matches = [];
   let attempts = 0;
 
   while (matches.length < count && attempts < maxAttempts) {
-    const candidate = generateCloseIP(ip);
-    attempts++;
+    // Generate a batch of candidates
+    const batch = Array.from({ length: parallelBatch }, () => generateCloseIP(ip));
+    attempts += batch.length;
 
-    try {
-      const res = await axios.get(`https://ipwho.is/${candidate}`);
-      if (res.data.success) {
-        matches.push(res.data); // push full ipwho.is data
+    // Run all API calls in parallel
+    const results = await Promise.allSettled(
+      batch.map(candidate => axios.get(`https://ipwho.is/${candidate}`))
+    );
+
+    for (const result of results) {
+      if (matches.length >= count) break;
+      if (result.status === "fulfilled" && result.value.data.success) {
+        matches.push(result.value.data); // push full ipwho.is data
       }
-    } catch (err) {
-      // skip failed IP
     }
   }
 
