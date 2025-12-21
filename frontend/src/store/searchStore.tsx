@@ -55,15 +55,12 @@ export const useSearchStore = create<SearchStoreState>((set) => ({
     searchError: null,
     search: async (query: string) => {
         set({ searching: true, searchError: null });
-        console.log('🔍 Search called with query:', query);
         try {
             const res = await api.post(`/search`, { query });
-            console.log('✅ Search response:', res.data);
-            console.log('📦 Full response structure:', JSON.stringify(res.data, null, 2));
             
             // Backend returns results in "resutls" (typo in backend)
             if (res.data && res.data.success && res.data.resutls) {
-                console.log('✅ Found results in res.data.resutls:', res.data.resutls);
+                set((state) => state.recentSearches.includes(query) ? state : { recentSearches: [query, ...state.recentSearches] });
                 return res.data.resutls;
             }
             
