@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { use } from 'react';
 import { Plus, BookmarkPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CurrentIPCard from '@/components/cards/CurrentIPCard';
-import type { IPGeoData } from '@/store/ipgeoStore';
+import { useIPGeoStore, type IPGeoData } from '@/store/ipgeoStore';
 
 
 const fakeData: IPGeoData = {
@@ -47,6 +47,11 @@ const fakeData: IPGeoData = {
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
+  
+  const currentIPGeo = useIPGeoStore((state) => state.currentIPGeo);
+  const fetchingCurrentIPGeo = useIPGeoStore((state) => state.fetchingCurrentIPGeo);
+  const fetchCurrentIPGeo = useIPGeoStore((state) => state.fetchCurrentIPGeo);
+  const fetcingCurrentIPGeoError = useIPGeoStore((state) => state.fetcingCurrentIPGeoError);
 
   return (
     <div className="space-y-6">
