@@ -52,6 +52,31 @@ export const addSearchQuery = async (req, res) => {
     }
 };
 
+export const getIPSuggestions = async (req, res) => {
+    const { query } = req.body; // IP address user typed
+    try {
+        // Generate 5 working close IPs (parallelized)
+        const suggestions = await getWorkingCloseMatches(query, 5, 50, 10);
+
+        return res.status(200).json({
+            success: true,
+            data: suggestions,
+            message: {
+                title: "IP suggestions generated",
+                suggestion: `Returned ${suggestions.length} working IPs similar to your input.`
+            }
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: {
+                title: "Invalid request",
+                suggestion: error.message || "An error occurred generating IP suggestions."
+            }
+        });
+    }
+};
+
 export const deleteSearchQuery = async (req, res) => {
     const { query } = req.body; // query to delete
     try {
