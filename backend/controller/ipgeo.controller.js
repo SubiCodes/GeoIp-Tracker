@@ -22,13 +22,58 @@ export const createIpGeo = async (req, res) => {
                 }
             });
         };
-        //CALL THE GEOIP SERVICE AND CREATE THE ENTRY
+        //CALL THE GEOIP SERVICE
         const response = await fetch('https://ipwho.is/' + validIp);
-        const ipgeo = await response.json(); 
+        if (!response.ok) {
+            throw new Error(`Failed to fetch IP geo data: ${response.status}`);
+        }
+        const ipgeoData = await response.json();
+        // Check if the API returned success: false
+        if (!ipgeoData.success) {
+            return res.status(400).json({
+                success: false,
+                message: {
+                    title: "Invalid IP",
+                    suggestion: "The IP geo service could not find data for this IP address."
+                }
+            });
+        };
+
+        //CREATE THE DATABASE ENTRY
+        const newIpGeo = new IPGeo({
+            ip: ipgeoData.ip,
+            success: ipgeoData.success,
+            type: ipgeoData.type,
+            continent: ipgeoData.continent,
+            continent_code: ipgeoData.continent_code,
+            country: ipgeoData.country,
+            country_code: ipgeoData.country_code,
+            region: ipgeoData.region,
+            region_code: ipgeoData.region_code,
+            city: ipgeoData.city,
+            latitude: ipgeoData.latitude,
+            longitude: ipgeoData.longitude,
+            is_eu: ipgeoData.is_eu,
+            postal: ipgeoData.postal,
+            calling_code: ipgeoData.calling_code,
+            capital: ipgeoData.capital,
+            borders: ipgeoData.borders,
+            flag: ipgeoData.flag,
+            connection: ipgeoData.connection,
+            timezone: ipgeoData.timezone,
+            description: description || "",
+            user: userId
+        });
+
+        await newIpGeo.save();
 
         return res.status(200).json({
             success: true,
-            data: ipgeo,
+            data: newIpGeo,
+            message: {
+                title: "IP Geo Created",
+                suggestion: "IP geo data has been successfully saved."
+            },
         });
     } catch (error) {
         const isUnauthorized = error.message.includes("Unauthorized");
