@@ -18,6 +18,7 @@ interface SearchStoreState {
     suggestions: IPGeoData[];
     fetchingSuggestions: boolean;
     fetchSuggestions: (query: string) => Promise<void>;
+    deleteSearchHistoryItem: (query: string) => Promise<void>;
 }
 
 export const useSearchStore = create<SearchStoreState>((set) => ({
@@ -91,6 +92,14 @@ export const useSearchStore = create<SearchStoreState>((set) => ({
             console.error("Fetching suggestions failed:", error);
         } finally {
             set({ fetchingSuggestions: false });
+        }
+    },
+    deleteSearchHistoryItem: async (query: string) => {
+        try {
+            set((state) => ({ recentSearches: state.recentSearches.filter(item => item !== query) }));
+            await api.post(`/search/delete`, { query });
+        } catch (error) {
+            console.error("Deleting search history item failed:", error);
         }
     }
 }));
