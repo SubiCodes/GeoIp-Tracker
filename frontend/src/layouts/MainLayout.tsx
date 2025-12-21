@@ -128,15 +128,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
           {children}
         </main>
       </div>
-
-      {/* Footer */}
-      <footer className="border-t bg-background">
-        <div className="mx-auto max-w-7xl flex h-14 items-center justify-center px-4">
-          <p className="text-xs text-muted-foreground">
-            &copy; {new Date().getFullYear()} GeoIP Tracker. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
