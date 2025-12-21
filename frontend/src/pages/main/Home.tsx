@@ -24,10 +24,20 @@ function Home() {
 
   const [mountedForDeletion, setMountedForDeletion] = React.useState<string | null>(null);
 
+  const refetchCurrentIPGeo = async () => {
+    if (!currentIPGeo) {
+      await fetchCurrentIPGeo();
+    }
+  }
+
   React.useEffect(() => {
     fetchCurrentIPGeo();
     fetchIPGeoDatas();
   }, []);
+
+  React.useEffect(() => {
+    refetchCurrentIPGeo();
+  }, [currentIPGeo]);
 
   return (
     <div className="space-y-6">
