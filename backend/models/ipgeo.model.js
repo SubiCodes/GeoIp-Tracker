@@ -88,6 +88,12 @@ const ipgeoSchema = new mongoose.Schema({
   description: {
     type: String,
     default: ""
+  },
+  // New: reference to User who owns this IPGeo
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true
   }
 }, {
   collection: "ipgeo",
