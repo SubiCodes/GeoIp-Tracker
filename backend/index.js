@@ -5,7 +5,6 @@ import mongoose from 'mongoose';
 import { connectDB } from './config/db.js';
 import cookieParser from "cookie-parser";
 import userAuthRouter from './route/user-auth.route.js';
-import ipgeoRouter from './route/ipgeo.route.js';
 
 dotenv.config();
 
@@ -18,7 +17,6 @@ app.use(cors({
 }));
 
 app.use('/auth', userAuthRouter);
-app.use('/ipgeo', ipgeoRouter);
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'GeoIP-Tracker backend running' });
