@@ -89,7 +89,7 @@ export const createIpGeo = async (req, res) => {
 
 export const getUserIpGeos = async (req, res) => {
     try {
-        const userId = getUserIdFromCookie(req);
+        const userId = await getUserIdFromCookie(req);
         const ipgeos = await IPGeo.find({ user: userId });
         return res.status(200).json({
             success: true,
@@ -112,7 +112,39 @@ export const getUserIpGeos = async (req, res) => {
 };
 
 export const updateIpGeo = async (req, res) => {
-
+    const { id, description } = req.body;
+    try {
+        await getUserIdFromCookie(req);
+        const ipgeo = await IPGeo.findById(id);
+        if (!ipgeo) {
+            return res.status(404).json({
+                success: false,
+                message: {
+                    title: "Not Found",
+                    suggestion: "No IP Geo entry found with the provided ID."
+                }
+            });
+        };
+        ipgeo.description = description || ipgeo.description;
+        await ipgeo.save();
+        return res.status(200).json({
+            success: true,
+            data: ipgeo,
+            message: {
+                title: "IP Geo Updated",
+                suggestion: "IP Geo entry has been successfully updated."
+            },
+        });
+    } catch (error) {
+        const isUnauthorized = error.message.includes("Unauthorized");
+        return res.status(isUnauthorized ? 401 : 400).json({
+            success: false,
+            message: {
+                title: isUnauthorized ? "Unauthorized" : "Invalid request",
+                suggestion: error.message
+            }
+        });
+    }
 };
 
 export const deleteIpGeo = async (req, res) => {
