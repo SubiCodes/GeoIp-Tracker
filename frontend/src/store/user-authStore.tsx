@@ -54,13 +54,30 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
                 set({ user: res.data.data, signInError: null });
                 navigate('/home');
             } else {
-                set({ user: null, signInError: res.data?.message?.title || "Login failed" });
+                const msg = res.data?.message;
+                if (msg?.title && msg?.suggestion) {
+                    set({ user: null, signInError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ user: null, signInError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ user: null, signInError: msg.suggestion });
+                } else {
+                    set({ user: null, signInError: "Login failed" });
+                }
             }
         } catch (error) {
             set({ user: null });
             if (axios.isAxiosError(error)) {
                 const msg = error.response?.data?.message;
-                set({ signInError: msg?.title || "Login failed" });
+                if (msg?.title && msg?.suggestion) {
+                    set({ signInError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ signInError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ signInError: msg.suggestion });
+                } else {
+                    set({ signInError: "Login failed" });
+                }
             } else {
                 set({ signInError: (error as Error).message || "Login failed" });
             }
