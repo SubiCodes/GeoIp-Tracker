@@ -25,7 +25,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    validateUser(navigate);
+    validateUser(navigate, false);
   }, []);
 
   // Coordinates for Balanga, Central Luzon, Philippines
