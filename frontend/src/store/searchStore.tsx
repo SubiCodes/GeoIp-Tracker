@@ -14,7 +14,7 @@ interface SearchStoreState {
     fetchRecentSearches: () => Promise<void>;
     searching: boolean;
     searchError?: string | null;
-    search: (query: string) => Promise<IPGeoData[]>;
+    search: (query: string) => Promise<IPGeoData[] | undefined>;
     suggestions: IPGeoData[];
     fetchingSuggestions: boolean;
     fetchSuggestions: (query: string) => Promise<void>;
@@ -55,13 +55,25 @@ export const useSearchStore = create<SearchStoreState>((set) => ({
     searchError: null,
     search: async (query: string) => {
         set({ searching: true, searchError: null });
+        console.log('🔍 Search called with query:', query);
         try {
             const res = await api.post(`/search`, { query });
-            if (res.data && res.data.success && res.data.data) {
-                return res.data.data;
+            console.log('✅ Search response:', res.data);
+            console.log('📦 Full response structure:', JSON.stringify(res.data, null, 2));
+            
+            // Backend returns results in "resutls" (typo in backend)
+            if (res.data && res.data.success && res.data.resutls) {
+                console.log('✅ Found results in res.data.resutls:', res.data.resutls);
+                return res.data.resutls;
             }
+            
+            console.log('⚠️ No results found in expected location');
+            console.log('Available keys:', Object.keys(res.data || {}));
+            return undefined;
         } catch (error) {
+            console.error('❌ Search error:', error);
             if (axios.isAxiosError(error)) {
+                console.error('Response data:', error.response?.data);
                 const msg = error.response?.data?.message;
                 if (msg?.title && msg?.suggestion) {
                     set({ searchError: `${msg.title}: ${msg.suggestion}` });
@@ -75,21 +87,25 @@ export const useSearchStore = create<SearchStoreState>((set) => ({
             } else {
                 set({ searchError: (error as Error).message || "Fetching search results failed" });
             }
+            return undefined;
         } finally {
             set({ searching: false });
         }
     },
     suggestions: [],
     fetchingSuggestions: false,
-    fetchSuggestions: async (query: string ) => {
+    fetchSuggestions: async (query: string) => {
         set({ fetchingSuggestions: true });
         try {
             const res = await api.post('/search/suggestions', { query });
             if (res.data && res.data.success && res.data.data) {
                 set({ suggestions: res.data.data });
+            } else {
+                set({ suggestions: [] });
             }
         } catch (error) {
             console.error("Fetching suggestions failed:", error);
+            set({ suggestions: [] });
         } finally {
             set({ fetchingSuggestions: false });
         }

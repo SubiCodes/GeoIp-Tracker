@@ -72,7 +72,7 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
     };
 
     const handleSuggestionClick = (suggestion: any) => {
-        const suggestionQuery = suggestion.ip || suggestion.query || '';
+        const suggestionQuery = suggestion.ip || '';
         setQuery(suggestionQuery);
         handleSearch(suggestionQuery);
     };
@@ -204,11 +204,6 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
                                         <div className="font-medium text-gray-900">
                                             {suggestion.ip}
                                         </div>
-                                        {suggestion.city && suggestion.country && (
-                                            <div className="text-sm text-gray-500 mt-1">
-                                                {suggestion.city}, {suggestion.country}
-                                            </div>
-                                        )}
                                     </button>
                                 ))}
                             </div>
@@ -223,7 +218,7 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
                             </h3>
                             <div className="space-y-3">
                                 {searchResults.map((result, index) => (
-                                    <AddedIPCard key={index} {...result} />
+                                    <AddedIPCard key={index} data={result} />
                                 ))}
                             </div>
                         </div>
