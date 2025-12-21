@@ -1,3 +1,4 @@
+import LoadingScreen from "@/components/LoadingScreen";
 import useUserAuthStore from "@/store/user-authStore";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -24,7 +25,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         <h1 className="text-xl font-bold">GeoIP Tracker</h1>
       </header>
       <main className="flex-1 w-full max-w-5xl mx-auto px-4">
-        {children}
+        {validatingUser ? <LoadingScreen /> : children}
       </main>
       {/* Example: Footer can go here */}
       <footer className="w-full bg-white shadow p-4 mt-4 text-center text-xs text-gray-500">
