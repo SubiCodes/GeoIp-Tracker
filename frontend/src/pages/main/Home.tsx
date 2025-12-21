@@ -114,6 +114,7 @@ function Home() {
 
   React.useEffect(() => {
     fetchCurrentIPGeo();
+    fetchIPGeoDatas();
   }, []);
 
   return (
@@ -151,11 +152,21 @@ function Home() {
       {/* Saved IP Addresses */}
       <div className="mt-10">
         <h2 className="text-xl font-bold mb-4">Saved IP Addresses</h2>
-        <div className="flex flex-col gap-2">
-          {fakeIpGeoData.map((ip, idx) => (
-            <AddedIPCard key={ip.ip + idx} data={ip} />
-          ))}
-        </div>
+        {fetchingIPGeoDatas ? (
+          <div className="flex justify-center items-center min-h-40">
+            <MoonLoader size={32} color="#6366f1" />
+          </div>
+        ) : fetcingIPGeoDatasError ? (
+          <ErrorWithRetryCard error={fetcingIPGeoDatasError} onRetry={fetchIPGeoDatas} />
+        ) : ipGeoDatas && ipGeoDatas.length > 0 ? (
+          <div className="flex flex-col gap-2">
+            {ipGeoDatas.map((ip, idx) => (
+              <AddedIPCard key={ip.ip + idx} data={ip} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center text-muted-foreground">No saved IP addresses found.</div>
+        )}
       </div>
     </div>
   );
