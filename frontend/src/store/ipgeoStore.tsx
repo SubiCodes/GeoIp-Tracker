@@ -104,7 +104,6 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
             if (res.data && res.data.success && res.data.data) {
                 set({ ipGeoDatas: res.data.data });
             };
-            console.log(res.data);
         } catch (error) {
             set({ currentIPGeo: null });
             if (axios.isAxiosError(error)) {
@@ -169,7 +168,7 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
             const res = await api.delete(`/ipgeo/${id}`);
             if (res.data && res.data.success) {
                 set((state) => ({
-                    ipGeoDatas: state.ipGeoDatas ? state.ipGeoDatas.filter((item) => item.ip !== id) : null
+                    ipGeoDatas: state.ipGeoDatas ? state.ipGeoDatas.filter((item) => item._id !== id) : null
                 }));
                 return true;
             } else {
