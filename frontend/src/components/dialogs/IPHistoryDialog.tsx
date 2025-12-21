@@ -3,7 +3,6 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
-    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
@@ -17,14 +16,10 @@ interface IPHistoryDialogProps {
 function IPHistoryDialog({ triggerButton }: IPHistoryDialogProps) {
     return (
         <AlertDialog>
-            <AlertDialogTrigger>{triggerButton}</AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                    </AlertDialogDescription>
+            <AlertDialogTrigger >{triggerButton}</AlertDialogTrigger>
+            <AlertDialogContent className="max-w-2xl max-h-[80vh] lg:max-w-3xl 2xl:max-w-4xl flex flex-col p-0">
+                <AlertDialogHeader className="px-6 pt-6 pb-4 border-b">
+                    <AlertDialogTitle className="text-xl font-semibold">IP Addresses History</AlertDialogTitle>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
