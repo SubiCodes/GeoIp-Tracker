@@ -79,3 +79,40 @@ export const addIPToHistory = async (req, res) => {
         });
     }
 };
+
+export const getUserIPHistory = async (req, res) => {
+    try {
+        const userId = await getUserIdFromCookie(req);
+
+        // Fetch all IPs saved by this user, sorted by newest first
+        const ipHistory = await IPGeo.find({ user: userId }).sort({ createdAt: -1 });
+
+        return res.status(200).json({
+            success: true,
+            data: ipHistory,
+            message: {
+                title: "User IP history retrieved",
+                suggestion: ipHistory.length
+                    ? "All saved IPs have been retrieved."
+                    : "No IPs have been saved yet."
+            }
+        });
+    } catch (error) {
+        if (error.message?.includes("Unauthorized")) {
+            return res.status(401).json({
+                success: false,
+                message: {
+                    title: "Unauthorized",
+                    suggestion: "You must be logged in to view your saved IPs."
+                }
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            message: {
+                title: "Invalid request",
+                suggestion: error.message || "An error occurred while fetching IP history."
+            }
+        });
+    }
+};
