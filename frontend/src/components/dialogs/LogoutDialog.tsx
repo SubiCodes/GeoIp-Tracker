@@ -38,7 +38,7 @@ function LogoutDialog() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => { logoutUser(navigate) }}>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={() => { logoutUser(navigate) }} className='bg-red-500 text-white hover:bg-red-600'>Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
