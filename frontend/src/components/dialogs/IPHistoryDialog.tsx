@@ -1,3 +1,5 @@
+/* eslint-disable react-hooks/set-state-in-effect */
+import { useState, useEffect } from 'react';
 import {
     AlertDialog,
     AlertDialogContent,
@@ -7,6 +9,8 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Trash2 } from "lucide-react"
 import { useIPHistoryStore } from "@/store/ipHistoryStore";
 import AddedIPCard from "../cards/AddedIPCard";
 
@@ -15,41 +19,124 @@ interface IPHistoryDialogProps {
 }
 
 function IPHistoryDialog({ triggerButton }: IPHistoryDialogProps) {
-
     const ipHistory = useIPHistoryStore((state) => state.ipHistory);
+    const [selectedIPs, setSelectedIPs] = useState<Set<string>>(new Set());
+    const [isAllSelected, setIsAllSelected] = useState(false);
+
+    // Reset selection when dialog opens
+    useEffect(() => {
+        setSelectedIPs(new Set());
+        setIsAllSelected(false);
+    }, [ipHistory]);
+
+    const handleSelectAll = (checked: boolean) => {
+        if (checked) {
+            const allIds = new Set(ipHistory.map(ip => ip._id).filter((id): id is string => id !== undefined));
+            setSelectedIPs(allIds);
+            setIsAllSelected(true);
+        } else {
+            setSelectedIPs(new Set());
+            setIsAllSelected(false);
+        }
+    };
+
+    const handleToggleIP = (id: string, checked: boolean) => {
+        const newSelected = new Set(selectedIPs);
+        if (checked) {
+            newSelected.add(id);
+        } else {
+            newSelected.delete(id);
+        }
+        setSelectedIPs(newSelected);
+        setIsAllSelected(newSelected.size === ipHistory.length);
+    };
+
+    const handleDeleteSelected = () => {
+        // TODO: Implement bulk delete logic
+        console.log('Delete selected IPs:', Array.from(selectedIPs));
+    };
 
     return (
         <AlertDialog>
-            <AlertDialogTrigger >{triggerButton}</AlertDialogTrigger>
+            <AlertDialogTrigger asChild>{triggerButton}</AlertDialogTrigger>
             <AlertDialogContent className="max-w-2xl max-h-[80vh] lg:max-w-3xl 2xl:max-w-4xl flex flex-col p-0">
                 <AlertDialogHeader className="px-6 pt-6 pb-4 border-b">
-                    <AlertDialogTitle className="text-xl font-semibold">IP Addresses History</AlertDialogTitle>
+                    <AlertDialogTitle className="text-xl font-semibold">IP Address History</AlertDialogTitle>
                 </AlertDialogHeader>
-                <div className="flex-1 flex flex-col">
-                    {/* HEADER */}
-                    <div>
-
+                
+                {ipHistory.length === 0 ? (
+                    <div className="flex-1 flex items-center justify-center p-12">
+                        <div className="text-center space-y-2">
+                            <p className="text-muted-foreground">No IP history available.</p>
+                            <p className="text-sm text-muted-foreground">Your saved IP addresses will appear here.</p>
+                        </div>
                     </div>
-                    <div className="flex flex-col">
-                        {ipHistory.length === 0 && (
-                            <div className="p-6 text-center text-muted-foreground">
-                                No IP history available. Displaying current your IP geolocation.
-                            </div>
-                        )}
-                        {ipHistory.length > 0 && (
-                            ipHistory.map((ipgeo) => (
-                                <Label id={`label-${ipgeo._id}`} className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-blue-600 has-[[aria-checked=true]]:bg-blue-50 dark:has-[[aria-checked=true]]:border-blue-900 dark:has-[[aria-checked=true]]:bg-blue-950">
-                                    <Checkbox
-                                        id={`toggle-${ipgeo._id}`}
-                                        defaultChecked
-                                        className="data-[state=checked]:border-blue-600 data-[state=checked]:bg-blue-600 data-[state=checked]:text-white dark:data-[state=checked]:border-blue-700 dark:data-[state=checked]:bg-blue-700"
-                                    />
-                                    <AddedIPCard key={ipgeo._id} data={ipgeo} />
+                ) : (
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                        {/* Selection Header */}
+                        <div className="px-6 py-3 border-b bg-muted/30 flex items-center justify-between">
+                            <div className="flex items-center gap-3">
+                                <Checkbox
+                                    id="select-all"
+                                    checked={isAllSelected}
+                                    onCheckedChange={handleSelectAll}
+                                    className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                />
+                                <Label 
+                                    htmlFor="select-all" 
+                                    className="text-sm font-medium cursor-pointer select-none"
+                                >
+                                    Select All ({ipHistory.length})
                                 </Label>
-                            ))
-                        )}
+                            </div>
+                            
+                            {selectedIPs.size > 0 && (
+                                <div className="flex items-center gap-2">
+                                    <span className="text-sm text-muted-foreground">
+                                        {selectedIPs.size} selected
+                                    </span>
+                                    <Button 
+                                        variant="destructive" 
+                                        size="sm"
+                                        onClick={handleDeleteSelected}
+                                        className="h-8"
+                                    >
+                                        <Trash2 className="h-4 w-4 mr-1" />
+                                        Delete
+                                    </Button>
+                                </div>
+                            )}
+                        </div>
+
+                        {/* IP List */}
+                        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-3">
+                            {ipHistory.map((ipgeo) => {
+                                if (!ipgeo._id) return null;
+                                
+                                return (
+                                    <Label 
+                                        key={ipgeo._id}
+                                        htmlFor={`toggle-${ipgeo._id}`}
+                                        className="flex items-start gap-4 rounded-lg border p-4 cursor-pointer transition-all hover:bg-accent/50 has-[[data-state=checked]]:border-primary has-[[data-state=checked]]:bg-primary/5"
+                                    >
+                                        <div className="flex items-center h-full pt-6">
+                                            <Checkbox
+                                                id={`toggle-${ipgeo._id}`}
+                                                checked={selectedIPs.has(ipgeo._id)}
+                                                onCheckedChange={(checked) => handleToggleIP(ipgeo._id!, checked as boolean)}
+                                                className="data-[state=checked]:border-primary data-[state=checked]:bg-primary"
+                                                onClick={(e) => e.stopPropagation()}
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <AddedIPCard data={ipgeo} />
+                                        </div>
+                                    </Label>
+                                );
+                            })}
+                        </div>
                     </div>
-                </div>
+                )}
             </AlertDialogContent>
         </AlertDialog>
     )
