@@ -56,6 +56,9 @@ interface IPGeoStoreState {
     fetchingIPGeoDatas: boolean,
     fetchIPGeoDatas: () => Promise<void>,
     fetcingIPGeoDatasError?: string | null,
+    addingIPGeoData: boolean,
+    addIPGeoData: (ip: string, description?: string) => Promise<void>,
+    addingIPGeoDataError?: string | null,
 };
 
 export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
@@ -119,4 +122,9 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
         }
     },
     fetcingIPGeoDatasError: null,
+    addingIPGeoData: false,
+    addIPGeoData: async (ip: string, description?: string) => {
+        
+    },
+    addingIPGeoDataError: null,
 }));
