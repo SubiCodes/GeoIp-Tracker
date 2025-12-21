@@ -124,7 +124,33 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
     fetcingIPGeoDatasError: null,
     addingIPGeoData: false,
     addIPGeoData: async (ip: string, description?: string) => {
-        
+        set({ addingIPGeoData: true, addingIPGeoDataError: null });
+        try {
+            const res = await api.post('/ipgeo', { ip, description });
+            if (res.data && res.data.success && res.data.data) {
+                set((state) => ({
+                    ipGeoDatas: state.ipGeoDatas ? [...state.ipGeoDatas, res.data.data] : [res.data.data]
+                }));
+            }
+        } catch (error) {
+            set({ currentIPGeo: null });
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                if (msg?.title && msg?.suggestion) {
+                    set({ addingIPGeoDataError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ addingIPGeoDataError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ addingIPGeoDataError: msg.suggestion });
+                } else {
+                    set({ addingIPGeoDataError: "Unable to save IP geolocation data." });
+                }
+            } else {
+                set({ addingIPGeoDataError: (error as Error).message || "Unable to save IP geolocation data." });
+            }
+        } finally {
+            set({ addingIPGeoData: false });
+        }
     },
     addingIPGeoDataError: null,
 }));
