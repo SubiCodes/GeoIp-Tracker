@@ -10,7 +10,7 @@ import {
     AlertDialogAction
 } from "@/components/ui/alert-dialog"
 import { useIPGeoStore } from '@/store/ipgeoStore';
-import { ToastContainer, toast } from "react-toastify";
+import {toast} from "sonner"
 
 interface AddSaveIPDialogProps {
     open: boolean;
@@ -25,10 +25,14 @@ function DeleteIPDialog({ open, onOpenChange, ipId, setIpToNull }: AddSaveIPDial
 
     const handleDelete = async () => {
         toast.loading("Deleting IP address...");
-        await deleteIPGeoData(ipId);
+        const res = await deleteIPGeoData(ipId);
         toast.dismiss();
 
-        toast.success("IP address deleted successfully!");
+        if (res) {
+            toast.success("IP address deleted successfully!");
+        } else {
+            toast.error("Failed to delete IP address. Please try again.");
+        }
 
         onOpenChange?.(false);
         setIpToNull();
@@ -52,7 +56,6 @@ function DeleteIPDialog({ open, onOpenChange, ipId, setIpToNull }: AddSaveIPDial
                     <AlertDialogAction onClick={handleDelete} className='bg-red-500 text-white hover:bg-red-600'>Delete IP</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
-            <ToastContainer />
         </AlertDialog>
     )
 }

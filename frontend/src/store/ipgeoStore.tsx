@@ -58,7 +58,7 @@ interface IPGeoStoreState {
     fetchIPGeoDatas: () => Promise<void>,
     fetcingIPGeoDatasError?: string | null,
     addingIPGeoData: boolean,
-    addIPGeoData: (ip: string, description?: string) => Promise<void>,
+    addIPGeoData: (ip: string, description?: string) => Promise<string|void>,
     addingIPGeoDataError?: string | null,
     deletingIPGeoData: string[],
     deleteIPGeoData: (id: string) => Promise<boolean>,
@@ -149,8 +149,10 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
                 } else {
                     set({ addingIPGeoDataError: "Unable to save IP geolocation data." });
                 }
+                return msg?.suggestion || "Unable to save IP geolocation data.";
             } else {
                 set({ addingIPGeoDataError: (error as Error).message || "Unable to save IP geolocation data." });
+                return "Unable to save IP geolocation data.";
             }
         } finally {
             set({ addingIPGeoData: false });
@@ -164,7 +166,7 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
             return { deletingIPGeoData: [...state.deletingIPGeoData, id] };
         });
         try {
-            const res = await api.delete(`/ipgeo`, { data: id });
+            const res = await api.delete(`/ipgeo/${id}`);
             if (res.data && res.data.success) {
                 set((state) => ({
                     ipGeoDatas: state.ipGeoDatas ? state.ipGeoDatas.filter((item) => item.ip !== id) : null

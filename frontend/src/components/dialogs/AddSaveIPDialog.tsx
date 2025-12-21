@@ -13,7 +13,7 @@ import {
 import { Button } from '../ui/button';
 import { useIPGeoStore } from '@/store/ipgeoStore';
 import { MoonLoader } from 'react-spinners';
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "sonner"
 
 interface AddSaveIPDialogProps {
     open: boolean;
@@ -45,7 +45,11 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
             setIpError("Please enter a valid IPv4 or IPv6 address.");
             return;
         };
-        await addIPGeoData(ip, description);
+        const res = await addIPGeoData(ip, description);
+        if (typeof res === "string") {
+            toast.error(res);
+            return;
+        }
         if (addingIPGeoDataError) {
             setIpError(addingIPGeoDataError);
             return;
@@ -109,7 +113,6 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                     </div>
                 </AlertDialogFooter>
             </AlertDialogContent>
-            <ToastContainer/>
         </AlertDialog>
     );
 };
