@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
 import { Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -5,28 +6,28 @@ import CurrentIPCard from '@/components/cards/CurrentIPCard';
 import { useIPGeoStore } from '@/store/ipgeoStore';
 import ErrorWithRetryCard from '@/components/cards/ErrorWithRetryCard';
 import { MoonLoader } from 'react-spinners';
+import { useIPHistoryStore } from '@/store/ipHistoryStore';
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
 
-  const currentIPGeo = useIPGeoStore((state) => state.currentIPGeo);
-  const fetchingCurrentIPGeo = useIPGeoStore((state) => state.fetchingCurrentIPGeo);
-  const fetchCurrentIPGeo = useIPGeoStore((state) => state.fetchCurrentIPGeo);
-  const fetcingCurrentIPGeoError = useIPGeoStore((state) => state.fetcingCurrentIPGeoError);
+  const displayedIPGeoData = useIPGeoStore((state) => state.displayedIPGeoData);
+  const displayingIPGeoData = useIPGeoStore((state) => state.displayingIPGeoData);
+  const displayingIPGeoDataError = useIPGeoStore((state) => state.displayingIPGeoDataError);
+  const displayIPGeoData = useIPGeoStore((state) => state.displayIPGeoData);
+  
+  const ipHistory = useIPHistoryStore((state) => state.ipHistory);
+  const fetchIPHistory = useIPHistoryStore((state) => state.fetchIPHistory);
 
-  const refetchCurrentIPGeo = async () => {
-    if (!currentIPGeo) {
-      await fetchCurrentIPGeo();
-    }
-  }
+  const fetchCurrentIPGEO = async () => {
+    await fetchIPHistory();
+    const currentIP = ipHistory.length > 0 ? ipHistory[0].ip : undefined;
+    await displayIPGeoData(currentIP);
+  };
 
   React.useEffect(() => {
-    fetchCurrentIPGeo();
-  }, []);
-
-  React.useEffect(() => {
-    refetchCurrentIPGeo();
-  }, [currentIPGeo]);
+    fetchCurrentIPGEO();
+  }, [ipHistory.length]);
 
   return (
     <div className="space-y-6">
@@ -48,14 +49,14 @@ function Home() {
       </div>
 
       {/* Content Area */}
-      {fetchingCurrentIPGeo ? (
+      {displayingIPGeoData ? (
         <div className="flex justify-center items-center min-h-75">
           <MoonLoader size={40} color="#6366f1" />
         </div>
-      ) : fetcingCurrentIPGeoError ? (
-        <ErrorWithRetryCard error={fetcingCurrentIPGeoError} onRetry={fetchCurrentIPGeo} />
-      ) : currentIPGeo ? (
-        <CurrentIPCard data={currentIPGeo} />
+      ) : displayingIPGeoDataError ? (
+        <ErrorWithRetryCard error={displayingIPGeoDataError} onRetry={displayIPGeoData} />
+      ) : displayedIPGeoData ? (
+        <CurrentIPCard data={displayedIPGeoData} />
       ) : (
         <div className="text-center text-muted-foreground">No IP geolocation data available.</div>
       )}
