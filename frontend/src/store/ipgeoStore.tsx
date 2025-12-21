@@ -59,6 +59,8 @@ interface IPGeoStoreState {
     addingIPGeoData: boolean,
     addIPGeoData: (ip: string, description?: string) => Promise<void>,
     addingIPGeoDataError?: string | null,
+    deletingIPGeoData: string[],
+    deleteIPGeoData: (id: string) => Promise<boolean>,
 };
 
 export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
@@ -153,4 +155,27 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
         }
     },
     addingIPGeoDataError: null,
+    deletingIPGeoData: [],
+    deleteIPGeoData: async (id: string) => {
+        set((state) => {
+            if (state.deletingIPGeoData.includes(id)) return state;
+            return { deletingIPGeoData: [...state.deletingIPGeoData, id] };
+        });
+        try {
+            const res = await api.delete(`/ipgeo`, { data: { id } });
+            if (res.data && res.data.success) {
+                set((state) => ({
+                    ipGeoDatas: state.ipGeoDatas ? state.ipGeoDatas.filter((item) => item.ip !== id) : null
+                }));
+                return true;
+            } else {
+                return false;
+            }
+        } catch (error) {
+            console.error("Error deleting IP geolocation data:", error);
+            return false
+        } finally {
+            set((state) => ({ deletingIPGeoData: state.deletingIPGeoData.filter((item) => item !== id) }));
+        }
+    }
 }));

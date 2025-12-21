@@ -1,8 +1,14 @@
 import React from 'react';
-import { MapPin } from 'lucide-react';
+import { MapPin, MoreVertical, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
+} from '@/components/ui/dropdown-menu';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { IPGeoData } from '@/store/ipgeoStore';
@@ -30,6 +36,26 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
               <Badge variant="outline" className="ml-2 text-xs border-primary text-primary bg-primary/10">{data.type}</Badge>
             </CardDescription>
           </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="p-2 rounded-full hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                aria-label="Open menu"
+                type="button"
+              >
+                <MoreVertical className="w-5 h-5 text-muted-foreground" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                variant="destructive"
+                className="text-red-600 focus:text-red-600"
+                onClick={onDelete}
+              >
+                <Trash2 className="w-4 h-4 mr-2" /> Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
