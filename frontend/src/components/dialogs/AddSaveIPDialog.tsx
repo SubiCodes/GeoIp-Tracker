@@ -1,4 +1,5 @@
 import React from 'react'
+import {isIP} from 'is-ip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -22,12 +23,24 @@ interface AddSaveIPDialogProps {
 const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange }) => {
     const [ip, setIp] = React.useState("");
     const [description, setDescription] = React.useState("");
+    const [ipError, setIpError] = React.useState<string | null>(null);
 
 
     // Only allow valid IPv4/IPv6 characters on input
     const allowedIpPattern = /^[0-9a-fA-F:.]*$/;
     const handleIpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIp(e.target.value);
+        setIpError(null);
+    };
+    const validateIp = (ip: string) => isIP(ip);
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!validateIp(ip)) {
+            setIpError("Please enter a valid IPv4 or IPv6 address.");
+            return;
+        }
+        // Proceed with save logic here
     };
     const handleIpBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
         const inputEvent = e.nativeEvent as InputEvent;
@@ -46,7 +59,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                         Enter the IP address you want to save to your list.
                     </AlertDialogDescription>
                 </AlertDialogHeader>
-                <form className="space-y-4">
+                <form className="space-y-4" onSubmit={handleSubmit}>
                     <div className="space-y-2">
                         <Label htmlFor="ip-address">IP Address</Label>
                         <Input
@@ -59,6 +72,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                             onChange={handleIpChange}
                             onBeforeInput={handleIpBeforeInput}
                         />
+                        {ipError && <p className="text-xs text-red-500 mt-1">{ipError}</p>}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="description">Description</Label>
@@ -74,8 +88,8 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                     </div>
                 </form>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Continue</AlertDialogAction>
+                    <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
+                    <AlertDialogAction type="submit" form="">Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
