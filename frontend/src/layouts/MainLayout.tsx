@@ -1,10 +1,22 @@
+import useUserAuthStore from "@/store/user-authStore";
 import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+  const navigate = useNavigate();
+
+  const validatingUser = useUserAuthStore((state) => state.validatingUser);
+  const validateUser = useUserAuthStore((state) => state.validateUser);
+  const location = useLocation();
+
+  React.useEffect(() => {
+    validateUser(navigate, true);
+  }, [location.pathname, validateUser]);
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {/* Example: Navbar or Sidebar can go here */}
