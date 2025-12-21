@@ -1,21 +1,28 @@
 import IPGeo from "../models/ipgeo.model.js";
 import { isIP } from "is-ip";
+import axios from "axios";
+import { getUserIdFromCookie } from "../util/getUserIdFromCookie.js";
 
 export const addIPToHistory = async (req, res) => {
     const { ip } = req.body;
+
     try {
         const userId = await getUserIdFromCookie(req);
-        const sameSavedIP = await IPGeo.findOne({ ip: ip, user: userId });
-        if (sameSavedIP) {
+
+        // Check if already saved
+        const existingIP = await IPGeo.findOne({ ip, user: userId });
+        if (existingIP) {
             return res.status(200).json({
                 success: true,
-                data: sameSavedIP,
+                data: existingIP,
                 message: {
                     title: "IP Already Saved",
                     suggestion: "This IP address is already in your history."
                 }
             });
-        };
+        }
+
+        // Validate IP
         if (!isIP(ip)) {
             return res.status(400).json({
                 success: false,
@@ -24,9 +31,12 @@ export const addIPToHistory = async (req, res) => {
                     suggestion: "The provided IP address is not valid."
                 }
             });
-        };
-        const ipGeoData = await fetch('https://ipwho.is/' + ip);
-        const ipGeoJson = await ipGeoData.json();
+        }
+
+        // Fetch geo data
+        const response = await axios.get(`https://ipwho.is/${ip}`);
+        const ipGeoJson = response.data;
+
         if (!ipGeoJson.success) {
             return res.status(400).json({
                 success: false,
@@ -35,12 +45,12 @@ export const addIPToHistory = async (req, res) => {
                     suggestion: "The provided IP address is invalid."
                 }
             });
-        };
-        const newIPGeo = new IPGeo({
-            ...ipGeoJson,
-            user: userId
-        });
+        }
+
+        // Save to DB
+        const newIPGeo = new IPGeo({ ...ipGeoJson, user: userId });
         await newIPGeo.save();
+
         res.status(201).json({
             success: true,
             data: newIPGeo,
@@ -49,13 +59,14 @@ export const addIPToHistory = async (req, res) => {
                 suggestion: "The IP address has been added to your history."
             }
         });
+
     } catch (error) {
-        if (error.message && error.message.includes('Unauthorized')) {
+        if (error.message?.includes('Unauthorized')) {
             return res.status(401).json({
                 success: false,
                 message: {
                     title: 'Unauthorized',
-                    suggestion: 'You must be logged in to add search history.'
+                    suggestion: 'You must be logged in to add IP history.'
                 }
             });
         }
