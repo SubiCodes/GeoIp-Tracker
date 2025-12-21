@@ -88,7 +88,27 @@ export const createIpGeo = async (req, res) => {
 };
 
 export const getUserIpGeos = async (req, res) => {
-
+    try {
+        const userId = getUserIdFromCookie(req);
+        const ipgeos = await IPGeo.find({ user: userId });
+        return res.status(200).json({
+            success: true,
+            data: ipgeos,
+            message: {
+                title: "IP Geos Retrieved",
+                suggestion: "User's saved IP Geo data has been successfully retrieved."
+            },
+        });
+    } catch (error) {
+        const isUnauthorized = error.message.includes("Unauthorized");
+        return res.status(isUnauthorized ? 401 : 400).json({
+            success: false,
+            message: {
+                title: isUnauthorized ? "Unauthorized" : "Invalid request",
+                suggestion: error.message
+            }
+        });
+    }
 };
 
 export const updateIpGeo = async (req, res) => {
