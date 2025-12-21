@@ -3,6 +3,6 @@ import { createIpGeo } from "../controller/ipgeo.controller.js";
 
 const ipgeoRouter = Router();
 
-ipgeoRouter.post('/createGeoIp', createIpGeo);
+ipgeoRouter.post('/ipgeo', createIpGeo);
 
 export default ipgeoRouter;
