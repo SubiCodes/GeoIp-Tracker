@@ -73,7 +73,7 @@ function Home() {
         ) : ipGeoDatas && ipGeoDatas.length > 0 ? (
           <div className="flex flex-col gap-2">
             {ipGeoDatas.map((ip, idx) => (
-              <AddedIPCard key={ip.ip + idx} data={ip} onDelete={() => setMountedForDeletion(ip?.id ??  null)}/>
+              <AddedIPCard key={ip.ip + idx} data={ip} onDelete={() => setMountedForDeletion(ip?._id ??  null)}/>
             ))}
           </div>
         ) : (
@@ -81,7 +81,7 @@ function Home() {
         )}
       </div>
       <AddSaveIPDialog open={isAddIPModalOpen} onOpenChange={setIsAddIPModalOpen}/>
-      <DeleteIPDialog open={mountedForDeletion !== null} setIpToNull={() => setMountedForDeletion(null)}/>
+      <DeleteIPDialog open={mountedForDeletion !== null} setIpToNull={() => setMountedForDeletion(null)} ipId={mountedForDeletion ?? ""}/>
     </div>
   );
 }

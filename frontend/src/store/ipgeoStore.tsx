@@ -8,7 +8,7 @@ const api = axios.create({
 
 
 export interface IPGeoData {
-    id?: string;
+    _id?: string;
     ip: string;
     success: boolean;
     type: string;
@@ -104,6 +104,7 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
             if (res.data && res.data.success && res.data.data) {
                 set({ ipGeoDatas: res.data.data });
             };
+            console.log(res.data);
         } catch (error) {
             set({ currentIPGeo: null });
             if (axios.isAxiosError(error)) {
@@ -163,7 +164,7 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
             return { deletingIPGeoData: [...state.deletingIPGeoData, id] };
         });
         try {
-            const res = await api.delete(`/ipgeo`, { data: { id } });
+            const res = await api.delete(`/ipgeo`, { data: id });
             if (res.data && res.data.success) {
                 set((state) => ({
                     ipGeoDatas: state.ipGeoDatas ? state.ipGeoDatas.filter((item) => item.ip !== id) : null

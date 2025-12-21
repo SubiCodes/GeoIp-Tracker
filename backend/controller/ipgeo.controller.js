@@ -148,7 +148,7 @@ export const updateIpGeo = async (req, res) => {
 };
 
 export const deleteIpGeo = async (req, res) => {
-    const { id } = req.body;
+    const { id } = req.params;
     try {
         const userId = await getUserIdFromCookie(req);
         const existingEntry = await IPGeo.findOne({ _id: id, user: userId });

@@ -6,6 +6,6 @@ const ipgeoRouter = Router();
 ipgeoRouter.post('/', createIpGeo);
 ipgeoRouter.get('/', getUserIpGeos);
 ipgeoRouter.put('/', updateIpGeo);
-ipgeoRouter.delete('/', deleteIpGeo);
+ipgeoRouter.delete('/:id', deleteIpGeo);
 
 export default ipgeoRouter;

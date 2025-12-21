@@ -15,7 +15,7 @@ import { ToastContainer, toast } from "react-toastify";
 interface AddSaveIPDialogProps {
     open: boolean;
     onOpenChange?: (open: boolean) => void;
-    ipId?: string | null;
+    ipId: string;
     setIpToNull: () => void;
 }
 
@@ -24,18 +24,19 @@ function DeleteIPDialog({ open, onOpenChange, ipId, setIpToNull }: AddSaveIPDial
     const deleteIPGeoData = useIPGeoStore((state) => state.deleteIPGeoData);
 
     const handleDelete = async () => {
-        if (ipId) {
-            await toast.promise(
-                deleteIPGeoData(ipId),
-                {
-                    pending: 'Deleting IP...',
-                    success: 'IP deleted 👌',
-                    error: 'Failed to delete IP 🤯'
-                }
-            );
-            onOpenChange?.(false);
-            setIpToNull();
-        }
+        toast.loading("Deleting IP address...");
+        await deleteIPGeoData(ipId);
+        toast.dismiss();
+
+        toast.success("IP address deleted successfully!");
+
+        onOpenChange?.(false);
+        setIpToNull();
+    };
+
+    const cancelDeletion = () => {
+        onOpenChange?.(false);
+        setIpToNull();
     }
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -47,7 +48,7 @@ function DeleteIPDialog({ open, onOpenChange, ipId, setIpToNull }: AddSaveIPDial
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogCancel onClick={cancelDeletion}>Cancel</AlertDialogCancel>
                     <AlertDialogAction onClick={handleDelete} className='bg-red-500 text-white hover:bg-red-600'>Delete IP</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
