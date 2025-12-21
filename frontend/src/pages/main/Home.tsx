@@ -1,49 +1,10 @@
-import React, { use } from 'react';
-import { Plus, BookmarkPlus } from 'lucide-react';
+import React from 'react';
+import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CurrentIPCard from '@/components/cards/CurrentIPCard';
-import { useIPGeoStore, type IPGeoData } from '@/store/ipgeoStore';
-
-
-const fakeData: IPGeoData = {
-  ip: '8.8.8.8',
-  success: true,
-  type: 'IPv4',
-  continent: 'North America',
-  continent_code: 'NA',
-  country: 'United States',
-  country_code: 'US',
-  region: 'California',
-  region_code: 'CA',
-  city: 'Mountain View',
-  latitude: 37.386,
-  longitude: -122.0838,
-  is_eu: false,
-  postal: '94035',
-  calling_code: '1',
-  capital: 'Washington D.C.',
-  borders: '',
-  flag: {
-    img: '',
-    emoji: '🇺🇸',
-    emoji_unicode: 'U+1F1FA U+1F1F8',
-  },
-  connection: {
-    asn: 15169,
-    org: 'Google LLC',
-    isp: 'Google LLC',
-    domain: 'google.com',
-  },
-  timezone: {
-    id: 'America/Los_Angeles',
-    abbr: 'PST',
-    is_dst: false,
-    offset: -8,
-    utc: '-08:00',
-    current_time: '2025-12-21T12:00:00-08:00',
-  },
-  description: 'Test IP for Google',
-};
+import { useIPGeoStore } from '@/store/ipgeoStore';
+import ErrorWithRetryCard from '@/components/cards/ErrorWithRetryCard';
+import { MoonLoader } from 'react-spinners';
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
@@ -52,6 +13,10 @@ function Home() {
   const fetchingCurrentIPGeo = useIPGeoStore((state) => state.fetchingCurrentIPGeo);
   const fetchCurrentIPGeo = useIPGeoStore((state) => state.fetchCurrentIPGeo);
   const fetcingCurrentIPGeoError = useIPGeoStore((state) => state.fetcingCurrentIPGeoError);
+
+  React.useEffect(() => {
+    fetchCurrentIPGeo();
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -73,7 +38,17 @@ function Home() {
       </div>
 
       {/* Content Area */}
-      <CurrentIPCard data={fakeData} />
+      {fetchingCurrentIPGeo ? (
+        <div className="flex justify-center items-center min-h-[300px]">
+          <MoonLoader size={40} color="#6366f1" />
+        </div>
+      ) : fetcingCurrentIPGeoError ? (
+        <ErrorWithRetryCard error={fetcingCurrentIPGeoError} onRetry={fetchCurrentIPGeo} />
+      ) : currentIPGeo ? (
+        <CurrentIPCard data={currentIPGeo} />
+      ) : (
+        <div className="text-center text-muted-foreground">No IP geolocation data available.</div>
+      )}
     </div>
   );
 }
