@@ -15,7 +15,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
   const validatingUser = useUserAuthStore((state) => state.validatingUser);
   const validateUser = useUserAuthStore((state) => state.validateUser);
-  
+
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   React.useEffect(() => {
@@ -72,7 +72,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             {navItems.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.path);
-              
+
               return (
                 <button
                   key={item.path}
@@ -83,10 +83,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   className={`
                     flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium
                     transition-colors
-                    ${
-                      active
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    ${active
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
                     }
                   `}
                 >
@@ -95,23 +94,25 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 </button>
               );
             })}
-
-            {/* Logout */}
-            <LogoutDialog />
           </nav>
 
           {/* User Info Section */}
-          <div className="absolute bottom-4 left-4 right-4 border-t pt-4">
-            <div className="flex items-center gap-3 rounded-lg bg-muted p-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
-                U
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium truncate">User</p>
-                <p className="text-xs text-muted-foreground truncate">user@example.com</p>
+
+          <div className="absolute bottom-4 left-4 right-4">
+            <LogoutDialog />
+            <div className="mt-2 mb-2 pt-4 border-t">
+              <div className="flex items-center gap-3 rounded-lg bg-muted p-3 border-t pt-4 border">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                  U
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium truncate">User</p>
+                  <p className="text-xs text-muted-foreground truncate">user@example.com</p>
+                </div>
               </div>
             </div>
           </div>
+
         </aside>
 
         {/* Backdrop for mobile */}
