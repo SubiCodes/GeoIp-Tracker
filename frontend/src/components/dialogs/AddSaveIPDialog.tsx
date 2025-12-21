@@ -11,6 +11,7 @@ import {
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from '../ui/button';
+import { useIPGeoStore } from '@/store/ipgeoStore';
 
 
 interface AddSaveIPDialogProps {
@@ -23,6 +24,10 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
     const [ip, setIp] = React.useState("");
     const [description, setDescription] = React.useState("");
     const [ipError, setIpError] = React.useState<string | null>(null);
+
+    const addingIPGeoData = useIPGeoStore((state) => state.addingIPGeoData);
+    const addIPGeoData = useIPGeoStore((state) => state.addIPGeoData);
+    const addingIPGeoDataError = useIPGeoStore((state) => state.addingIPGeoDataError);
 
 
     // Only allow valid IPv4/IPv6 characters on input
