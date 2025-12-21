@@ -10,8 +10,14 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import useUserAuthStore from '@/store/user-authStore'
+import { useNavigate } from 'react-router-dom';
 
 function LogoutDialog() {
+
+    const navigate = useNavigate();
+    const logoutUser = useUserAuthStore((state) => state.signoutUser);
+
     return (
         <AlertDialog>
             <AlertDialogTrigger>Open</AlertDialogTrigger>
@@ -24,7 +30,7 @@ function LogoutDialog() {
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction>Continue</AlertDialogAction>
+                    <AlertDialogAction onClick={() => { logoutUser(navigate) }}>Continue</AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
