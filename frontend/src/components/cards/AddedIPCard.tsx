@@ -51,8 +51,8 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
                                 Current IP
                             </Badge>
                         ) : (
-                            <Button 
-                                variant="outline" 
+                            <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={handleSetCurrent}
                                 className="whitespace-nowrap text-xs sm:text-sm"
@@ -60,26 +60,28 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
                                 Set Current
                             </Button>
                         )}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <button
-                                    className="p-2 rounded-full hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                                    aria-label="Open menu"
-                                    type="button"
-                                >
-                                    <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                                </button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem
-                                    variant="destructive"
-                                    className="text-red-600 focus:text-red-600"
-                                    onClick={() => onDelete && onDelete(data.ip)}
-                                >
-                                    <Trash2 className="w-4 h-4 mr-2" /> Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
+                        {onDelete && (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        className="p-2 rounded-full hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                        aria-label="Open menu"
+                                        type="button"
+                                    >
+                                        <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem
+                                        variant="destructive"
+                                        className="text-red-600 focus:text-red-600"
+                                        onClick={() => onDelete && onDelete(data.ip)}
+                                    >
+                                        <Trash2 className="w-4 h-4 mr-2" /> Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        )}
                     </div>
                 </div>
             </CardHeader>
