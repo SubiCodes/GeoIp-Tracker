@@ -91,7 +91,7 @@ const ipgeoSchema = new mongoose.Schema({
   },
   // New: reference to User who owns this IPGeo
   user: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: String,
     ref: "User",
     required: true
   }

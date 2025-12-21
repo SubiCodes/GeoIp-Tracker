@@ -7,8 +7,8 @@ import jwt from "jsonwebtoken";
  * @returns userId as string
  * @throws Error if no token or invalid token
  */
-export const getUserIdFromCookie = (req, cookieName = "token") => {
-  const token = req.cookies?.[cookieName];
+export const getUserIdFromCookie = (req) => {
+  const token = req.cookies.token;
 
   if (!token) {
     throw new Error("Unauthorized: No auth cookie found");
