@@ -1,5 +1,5 @@
 import React from 'react'
-import {isIP} from 'is-ip';
+import { isIP } from 'is-ip';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -12,6 +12,7 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
+import { Button } from '../ui/button';
 
 
 interface AddSaveIPDialogProps {
@@ -88,8 +89,10 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                     </div>
                 </form>
                 <AlertDialogFooter>
-                    <AlertDialogCancel type="button">Cancel</AlertDialogCancel>
-                    <AlertDialogAction type="submit" form="">Continue</AlertDialogAction>
+                    <div className='w-full flex flex-row items-end justify-end gap-2'>
+                        <Button variant="outline" onClick={() => onOpenChange?.(false)}>Cancel</Button>
+                        <Button onClick={handleSubmit} disabled={!validateIp(ip) || !ip.trim()}>Save IP</Button>
+                    </div>
                 </AlertDialogFooter>
             </AlertDialogContent>
         </AlertDialog>
