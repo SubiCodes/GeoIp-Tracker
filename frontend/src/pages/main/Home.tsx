@@ -1,6 +1,49 @@
 import React from 'react';
 import { Plus, BookmarkPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import CurrentIPCard from '@/components/cards/CurrentIPCard';
+import type { IPGeoData } from '@/store/ipgeoStore';
+
+
+const fakeData: IPGeoData = {
+  ip: '8.8.8.8',
+  success: true,
+  type: 'IPv4',
+  continent: 'North America',
+  continent_code: 'NA',
+  country: 'United States',
+  country_code: 'US',
+  region: 'California',
+  region_code: 'CA',
+  city: 'Mountain View',
+  latitude: 37.386,
+  longitude: -122.0838,
+  is_eu: false,
+  postal: '94035',
+  calling_code: '1',
+  capital: 'Washington D.C.',
+  borders: '',
+  flag: {
+    img: '',
+    emoji: '🇺🇸',
+    emoji_unicode: 'U+1F1FA U+1F1F8',
+  },
+  connection: {
+    asn: 15169,
+    org: 'Google LLC',
+    isp: 'Google LLC',
+    domain: 'google.com',
+  },
+  timezone: {
+    id: 'America/Los_Angeles',
+    abbr: 'PST',
+    is_dst: false,
+    offset: -8,
+    utc: '-08:00',
+    current_time: '2025-12-21T12:00:00-08:00',
+  },
+  description: 'Test IP for Google',
+};
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
@@ -25,9 +68,7 @@ function Home() {
       </div>
 
       {/* Content Area */}
-      <div className="border rounded-lg p-6 bg-card">
-        <p className="text-muted-foreground">Content goes here...</p>
-      </div>
+      <CurrentIPCard data={fakeData} />
     </div>
   );
 }

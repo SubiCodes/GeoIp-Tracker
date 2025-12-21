@@ -8,41 +8,82 @@ const api = axios.create({
 
 
 export interface IPGeoData {
-  ip: string;
-  success: boolean;
-  type: string;
-  continent: string;
-  continent_code: string;
-  country: string;
-  country_code: string;
-  region: string;
-  region_code: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-  is_eu: boolean;
-  postal?: string;
-  calling_code?: string;
-  capital?: string;
-  borders?: string;
-  flag?: {
-    img?: string;
-    emoji?: string;
-    emoji_unicode?: string;
-  };
-  connection?: {
-    asn?: number;
-    org?: string;
-    isp?: string;
-    domain?: string;
-  };
-  timezone?: {
-    id?: string;
-    abbr?: string;
-    is_dst?: boolean;
-    offset?: number;
-    utc?: string;
-    current_time?: string;
-  };
-  description?: string;
+    ip: string;
+    success: boolean;
+    type: string;
+    continent: string;
+    continent_code: string;
+    country: string;
+    country_code: string;
+    region: string;
+    region_code: string;
+    city: string;
+    latitude: number;
+    longitude: number;
+    is_eu: boolean;
+    postal?: string;
+    calling_code?: string;
+    capital?: string;
+    borders?: string;
+    flag?: {
+        img?: string;
+        emoji?: string;
+        emoji_unicode?: string;
+    };
+    connection?: {
+        asn?: number;
+        org?: string;
+        isp?: string;
+        domain?: string;
+    };
+    timezone?: {
+        id?: string;
+        abbr?: string;
+        is_dst?: boolean;
+        offset?: number;
+        utc?: string;
+        current_time?: string;
+    };
+    description?: string;
 };
+
+interface IPGeoStoreState {
+    currentIPGeo: IPGeoData | null,
+    fetchingCurrentIPGeo: boolean,
+    fetchCurrentIPGeo: () => Promise<void>,
+    fetcingCurrentIPGeoError?: string | null,
+};
+
+export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
+    currentIPGeo: null,
+    fetchingCurrentIPGeo: false,
+    fetchCurrentIPGeo: async () => {
+        set({ fetchingCurrentIPGeo: true, fetcingCurrentIPGeoError: null });
+        try {
+            const res = await axios.get('https://ipwho.is/');
+            if (res.data && res.data.success) {
+                set({ currentIPGeo: res.data });
+            };
+            console.log(res.data);
+        } catch (error) {
+            set({ currentIPGeo: null });
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                if (msg?.title && msg?.suggestion) {
+                    set({ fetcingCurrentIPGeoError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ fetcingCurrentIPGeoError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ fetcingCurrentIPGeoError: msg.suggestion });
+                } else {
+                    set({ fetcingCurrentIPGeoError: "Unable to get your current IP geolocation." });
+                }
+            } else {
+                set({ fetcingCurrentIPGeoError: (error as Error).message || "Unable to get your current IP geolocation." });
+            }
+        } finally {
+            set({ fetchingCurrentIPGeo: false });
+        }
+    },
+    fetcingCurrentIPGeoError: null,
+}));
