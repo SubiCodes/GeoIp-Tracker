@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from 'react';
 import {
@@ -21,6 +22,7 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
     const [query, setQuery] = useState("");
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [hasSearched, setHasSearched] = useState(false);
+    const [validationError, setValidationError] = useState("");
 
     const recentSearches = useSearchStore((state) => state.recentSearches);
     const fetchingRecentSearches = useSearchStore((state) => state.fetchingRecentSearches);
@@ -44,6 +46,7 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
     // Debounced suggestions fetch
     useEffect(() => {
         if (!query.trim()) {
+            setValidationError("");
             return;
         }
 
@@ -54,9 +57,30 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
         return () => clearTimeout(timer);
     }, [query, fetchSuggestions]);
 
-    const handleSearch = async (searchQuery: string) => {
-        if (!searchQuery.trim()) return;
+    const validateIP = (ip: string): boolean => {
+        const trimmedIP = ip.trim();
+        
+        // IPv4 pattern: 0-255.0-255.0-255.0-255
+        const ipv4Pattern = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+        
+        // IPv6 pattern: supports full, compressed, and mixed notation
+        const ipv6Pattern = /^(([0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$/;
+        
+        return ipv4Pattern.test(trimmedIP) || ipv6Pattern.test(trimmedIP);
+    };
 
+    const handleSearch = async (searchQuery: string) => {
+        if (!searchQuery.trim()) {
+            setValidationError("Please enter an IP address");
+            return;
+        }
+
+        if (!validateIP(searchQuery)) {
+            setValidationError("Please enter a valid IPv4 or IPv6 address");
+            return;
+        }
+
+        setValidationError("");
         setHasSearched(true);
         const results = await search(searchQuery);
         if (results) {
@@ -91,12 +115,14 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
         setQuery("");
         setHasSearched(false);
         setSearchResults([]);
+        setValidationError("");
     };
 
     const resetDialog = () => {
         setQuery("");
         setHasSearched(false);
         setSearchResults([]);
+        setValidationError("");
     };
 
     // Determine current view state
@@ -111,7 +137,7 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
             if (!open) resetDialog();
         }}>
             <AlertDialogTrigger asChild>{triggerButton}</AlertDialogTrigger>
-            <AlertDialogContent className="max-w-2xl max-h-[80vh] flex flex-col p-0">
+            <AlertDialogContent className="max-w-2xl max-h-[80vh] lg:max-w-3xl 2xl:max-w-4xl flex flex-col p-0">
                 <AlertDialogHeader className="px-6 pt-6 pb-4 border-b">
                     <AlertDialogTitle className="text-xl font-semibold">Search IP Addresses</AlertDialogTitle>
                 </AlertDialogHeader>
@@ -122,11 +148,11 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                         <Input
                             type="text"
-                            placeholder="Search by IP address, domain, or location..."
+                            placeholder="Search by IP address (IPv4 or IPv6)..."
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            className="pl-10 pr-10 h-12"
+                            className={`pl-10 pr-10 h-12 ${validationError ? 'border-red-500 focus-visible:ring-red-500' : ''}`}
                             autoFocus
                         />
                         {query && (
@@ -139,6 +165,12 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
                             </button>
                         )}
                     </div>
+                    {validationError && (
+                        <p className="text-sm text-red-600 mt-2 flex items-center gap-1">
+                            <AlertCircle className="h-4 w-4" />
+                            {validationError}
+                        </p>
+                    )}
                 </div>
 
                 {/* Content Area */}
@@ -172,19 +204,20 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
                             </h3>
                             <div className="space-y-2">
                                 {recentSearches.map((recentQuery, index) => (
-                                    <button
+                                    <div
                                         key={index}
+                                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors group cursor-pointer"
                                         onClick={() => handleRecentSearchClick(recentQuery)}
-                                        className="w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-100 transition-colors text-left group"
                                     >
                                         <span className="text-gray-700">{recentQuery}</span>
                                         <button
                                             onClick={(e) => handleDeleteRecent(e, recentQuery)}
                                             className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-200 rounded transition-opacity"
+                                            aria-label="Delete search"
                                         >
                                             <X className="h-4 w-4 text-gray-500" />
                                         </button>
-                                    </button>
+                                    </div>
                                 ))}
                             </div>
                         </div>
@@ -218,7 +251,7 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
                             </h3>
                             <div className="space-y-3">
                                 {searchResults.map((result, index) => (
-                                    <AddedIPCard key={index} data={result} />
+                                    <AddedIPCard key={index} {...result} />
                                 ))}
                             </div>
                         </div>
