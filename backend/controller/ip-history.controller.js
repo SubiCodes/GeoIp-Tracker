@@ -116,3 +116,65 @@ export const getUserIPHistory = async (req, res) => {
         });
     }
 };
+
+
+export const deleteMultipleIPs = async (req, res) => {
+    const { ids } = req.body; // Array of IPGeo document IDs to delete
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).json({
+            success: false,
+            message: {
+                title: "Invalid request",
+                suggestion: "You must provide an array of IDs to delete."
+            }
+        });
+    }
+
+    try {
+        const userId = await getUserIdFromCookie(req);
+
+        // Fetch all IPs that match the given IDs and belong to this user
+        const ipsToDelete = await IPGeo.find({ _id: { $in: ids }, user: userId });
+
+        if (ipsToDelete.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: {
+                    title: "No matching IPs",
+                    suggestion: "No IPs were found for deletion with the provided IDs."
+                }
+            });
+        }
+
+        // Delete the found IPs
+        await IPGeo.deleteMany({ _id: { $in: ipsToDelete.map(ip => ip._id) } });
+
+        return res.status(200).json({
+            success: true,
+            data: ipsToDelete.map(ip => ip._id),
+            message: {
+                title: "IPs deleted",
+                suggestion: `${ipsToDelete.length} IP(s) have been successfully deleted from your history.`
+            }
+        });
+
+    } catch (error) {
+        if (error.message?.includes("Unauthorized")) {
+            return res.status(401).json({
+                success: false,
+                message: {
+                    title: "Unauthorized",
+                    suggestion: "You must be logged in to delete IPs."
+                }
+            });
+        }
+        return res.status(400).json({
+            success: false,
+            message: {
+                title: "Invalid request",
+                suggestion: error.message || "An error occurred while deleting IPs."
+            }
+        });
+    }
+};
