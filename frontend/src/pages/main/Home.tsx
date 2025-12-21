@@ -7,6 +7,7 @@ import { useIPGeoStore } from '@/store/ipgeoStore';
 import ErrorWithRetryCard from '@/components/cards/ErrorWithRetryCard';
 import { MoonLoader } from 'react-spinners';
 import AddSaveIPDialog from '@/components/dialogs/AddSaveIPDialog';
+import { data } from 'react-router-dom';
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
@@ -20,6 +21,8 @@ function Home() {
   const fetchingIPGeoDatas = useIPGeoStore((state) => state.fetchingIPGeoDatas);
   const fetchIPGeoDatas = useIPGeoStore((state) => state.fetchIPGeoDatas);
   const fetcingIPGeoDatasError = useIPGeoStore((state) => state.fetcingIPGeoDatasError);
+
+  const [mountedForDeletion, setMountedForDeletion] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     fetchCurrentIPGeo();
@@ -70,14 +73,14 @@ function Home() {
         ) : ipGeoDatas && ipGeoDatas.length > 0 ? (
           <div className="flex flex-col gap-2">
             {ipGeoDatas.map((ip, idx) => (
-              <AddedIPCard key={ip.ip + idx} data={ip} />
+              <AddedIPCard key={ip.ip + idx} data={ip} onDelete={() => setMountedForDeletion(ip?.id ??  null)}/>
             ))}
           </div>
         ) : (
           <div className="text-center text-muted-foreground">No saved IP addresses found.</div>
         )}
       </div>
-      <AddSaveIPDialog open={isAddIPModalOpen} onOpenChange={setIsAddIPModalOpen} />
+      <AddSaveIPDialog open={isAddIPModalOpen} onOpenChange={setIsAddIPModalOpen}/>
     </div>
   );
 }

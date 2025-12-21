@@ -8,6 +8,7 @@ const api = axios.create({
 
 
 export interface IPGeoData {
+    id?: string;
     ip: string;
     success: boolean;
     type: string;

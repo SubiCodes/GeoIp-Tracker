@@ -16,13 +16,13 @@ import { useIPGeoStore, type IPGeoData } from '@/store/ipgeoStore';
 
 interface AddedIPCardProps {
     data: IPGeoData;
+    onDelete?: (ip: string) => void;
 }
 
-const AddedIPCard: React.FC<AddedIPCardProps> = ({ data }) => {
+const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
     const position: [number, number] = [data.latitude, data.longitude];
 
     const deletingIPGeoData = useIPGeoStore((state) => state.deletingIPGeoData);
-    const deleteIPGeoData = useIPGeoStore((state) => state.deleteIPGeoData);
 
     return (
         <Card className="hover:shadow-lg transition-shadow">
@@ -52,7 +52,7 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data }) => {
                             <DropdownMenuItem
                                 variant="destructive"
                                 className="text-red-600 focus:text-red-600"
-                                onClick={() => deleteIPGeoData(data.ip)}
+                                onClick={() => onDelete && onDelete(data.ip)}
                                 disabled={deletingIPGeoData.includes(data.ip)}
                             >
                                 <Trash2 className="w-4 h-4 mr-2" /> Delete
