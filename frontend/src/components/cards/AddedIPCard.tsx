@@ -24,11 +24,11 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
     const position: [number, number] = [data.latitude, data.longitude];
 
     const ipHistory = useIPHistoryStore((state) => state.ipHistory);
+    const addHistoryItem = useIPHistoryStore((state) => state.addHistoryItem);
     const isCurrentIP = ipHistory[0]?.ip === data.ip;
 
     const handleSetCurrent = () => {
-        // TODO: Implement set current IP logic
-        console.log('Set as current IP:', data.ip);
+        addHistoryItem(data.ip);
     };
 
     return (
