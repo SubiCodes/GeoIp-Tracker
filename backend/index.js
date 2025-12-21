@@ -6,6 +6,7 @@ import { connectDB } from './config/db.js';
 import cookieParser from "cookie-parser";
 import userAuthRouter from './route/user-auth.route.js';
 import searchRouter from './route/search.route.js';
+import ipRouter from './route/ip-history.route.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(cors({
 
 app.use('/auth', userAuthRouter);
 app.use('/search', searchRouter);
+app.use('/ip-history', ipRouter);
 
 app.get('/', (req, res) => {
     res.json({ status: 'ok', message: 'GeoIP-Tracker backend running' });
