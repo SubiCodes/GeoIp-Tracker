@@ -2,6 +2,8 @@ import LoadingScreen from "@/components/LoadingScreen";
 import useUserAuthStore from "@/store/user-authStore";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Home, Search, History, MapPin, Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface MainLayoutProps {
   children: React.ReactNode;
@@ -9,27 +11,128 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const navigate = useNavigate();
-
+  const location = useLocation();
   const validatingUser = useUserAuthStore((state) => state.validatingUser);
   const validateUser = useUserAuthStore((state) => state.validateUser);
-  const location = useLocation();
+  
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
 
   React.useEffect(() => {
     validateUser(navigate, true);
   }, [location.pathname, validateUser]);
 
+  const navItems = [
+    { path: "/home", icon: Home, label: "Home" },
+    { path: "/search", icon: Search, label: "Search" },
+    { path: "/history", icon: History, label: "History" },
+  ];
+
+  const isActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + "/");
+  };
+
+  if (validatingUser) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className="min-h-screen flex flex-col bg-background">
-      {/* Example: Navbar or Sidebar can go here */}
-      <header className="w-full bg-white shadow p-4 mb-4">
-        <h1 className="text-xl font-bold">GeoIP Tracker</h1>
+    <div className="min-h-screen bg-muted/30">
+      {/* Header */}
+      <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div className="mx-auto max-w-7xl flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            >
+              {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </Button>
+            <div className="flex items-center gap-2">
+              <MapPin className="h-6 w-6 text-primary" />
+              <h1 className="text-xl font-bold">GeoIP Tracker</h1>
+            </div>
+          </div>
+        </div>
       </header>
-      <main className="flex-1 w-full max-w-5xl mx-auto px-4">
-        {validatingUser ? <LoadingScreen /> : children}
-      </main>
-      {/* Example: Footer can go here */}
-      <footer className="w-full bg-white shadow p-4 mt-4 text-center text-xs text-gray-500">
-        &copy; {new Date().getFullYear()} GeoIP Tracker
+
+      <div className="mx-auto max-w-7xl flex bg-background">
+        {/* Sidebar */}
+        <aside
+          className={`
+            fixed md:sticky top-16 left-0 z-40 h-[calc(100vh-4rem)]
+            w-64 border-r bg-background transition-transform duration-300 ease-in-out
+            ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+            md:translate-x-0
+          `}
+        >
+          <nav className="flex flex-col gap-2 p-4">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              
+              return (
+                <button
+                  key={item.path}
+                  onClick={() => {
+                    navigate(item.path);
+                    setIsSidebarOpen(false);
+                  }}
+                  className={`
+                    flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium
+                    transition-colors
+                    ${
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    }
+                  `}
+                >
+                  <Icon className="h-5 w-5" />
+                  {item.label}
+                </button>
+              );
+            })}
+          </nav>
+
+          {/* User Info Section */}
+          <div className="absolute bottom-4 left-4 right-4 border-t pt-4">
+            <div className="flex items-center gap-3 rounded-lg bg-muted p-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold">
+                U
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium truncate">User</p>
+                <p className="text-xs text-muted-foreground truncate">user@example.com</p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        {/* Backdrop for mobile */}
+        {isSidebarOpen && (
+          <div
+            className="fixed inset-0 z-30 bg-black/50 md:hidden"
+            onClick={() => setIsSidebarOpen(false)}
+          />
+        )}
+
+        {/* Main Content */}
+        <main className="flex-1 p-6 md:p-8 min-h-[calc(100vh-8rem)]">
+          <div className="mx-auto max-w-3xl">
+            {children}
+          </div>
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="border-t bg-background">
+        <div className="mx-auto max-w-7xl flex h-14 items-center justify-center px-4">
+          <p className="text-xs text-muted-foreground">
+            &copy; {new Date().getFullYear()} GeoIP Tracker. All rights reserved.
+          </p>
+        </div>
       </footer>
     </div>
   );
