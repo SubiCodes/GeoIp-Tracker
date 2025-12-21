@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from '../ui/button';
 import { useIPGeoStore } from '@/store/ipgeoStore';
+import { MoonLoader } from 'react-spinners';
 
 
 interface AddSaveIPDialogProps {
@@ -38,13 +39,22 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
     };
     const validateIp = (ip: string) => isIP(ip);
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!validateIp(ip)) {
             setIpError("Please enter a valid IPv4 or IPv6 address.");
             return;
-        }
-        // Proceed with save logic here
+        };
+        await addIPGeoData(ip, description);
+        if (addingIPGeoDataError) {
+            setIpError(addingIPGeoDataError);
+            return;
+        };
+        if (!addingIPGeoDataError) {
+            setIp("");
+            setDescription("");
+            onOpenChange?.(false);
+        };
     };
     const handleIpBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
         const inputEvent = e.nativeEvent as InputEvent;
@@ -93,8 +103,8 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                 </form>
                 <AlertDialogFooter>
                     <div className='w-full flex flex-row items-end justify-end gap-2'>
-                        <Button variant="outline" onClick={() => onOpenChange?.(false)}>Cancel</Button>
-                        <Button onClick={handleSubmit} disabled={!validateIp(ip) || !ip.trim()}>Save IP</Button>
+                        <Button variant="outline" onClick={() => onOpenChange?.(false)} disabled={addingIPGeoData}>Cancel</Button>
+                        <Button onClick={handleSubmit} disabled={!validateIp(ip) || !ip.trim() || addingIPGeoData}>{addingIPGeoData ? <MoonLoader size={16} color="#ffffff" /> : "Save IP"}</Button>
                     </div>
                 </AlertDialogFooter>
             </AlertDialogContent>
