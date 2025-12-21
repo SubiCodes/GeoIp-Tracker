@@ -53,6 +53,7 @@ export const useIPHistoryStore = create<IPHistoryStoreState>((set) => ({
             toast.loading("Adding IP to history...");
             const res = await api.post('/ip-history', { ip });
             set((state) => ({ ipHistory: [...state.ipHistory, res.data] }));
+            toast.dismiss();
             toast.success("New IP set as current IP and added to history!");
         } catch (error) {
             if (axios.isAxiosError(error)) {
@@ -77,6 +78,7 @@ export const useIPHistoryStore = create<IPHistoryStoreState>((set) => ({
             toast.loading("Removing selected IPs from history...");
             await api.post(`/ip-history/delete`, { ids: id });
             set((state) => ({ ipHistory: state.ipHistory.filter((item) => !id.includes(item._id || '')) }));
+            toast.dismiss();
             toast.success("Selected IPs removed from history!");
         } catch (error) {
             if (axios.isAxiosError(error)) {
