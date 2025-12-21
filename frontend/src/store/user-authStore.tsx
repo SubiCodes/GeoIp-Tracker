@@ -21,6 +21,9 @@ interface UserAuthState {
     sigInUser: (email: string, password: string, navigate: (path: string) => void) => Promise<void>,
     signInError?: string | null,
     signoutUser: (navigate: (path: string) => void) => void,
+    signingUpUser: boolean,
+    signUpError?: string | null,
+    signUpUser: (name: string, email: string, password: string, navigate: (path: string) => void) => Promise<void>,
 }
 
 const useUserAuthStore = create<UserAuthState>((set) => ({
@@ -73,6 +76,28 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
             navigate('/');
         } catch (error) {
             console.error('Logout error:', error);
+        }
+    },
+    signingUpUser: false,
+    signUpError: null,
+    signUpUser: async (name: string, email: string, password: string, navigate: (path: string) => void) => {
+        set({ signingUpUser: true, user: null, signUpError: null });
+        try {
+            const res =await api.post('/auth/signup', { userName: name, email, password });
+            if (res.data && res.data.success && res.data.data) {
+                set({ user: res.data.data, signUpError: null });
+                navigate('/home');
+            };
+        } catch (error) {
+            set({ user: null });
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                set({ signUpError: msg?.title || "Signup failed" });
+            } else {
+                set({ signUpError: (error as Error).message || "Signup failed" });
+            }
+        } finally {
+            set({ signingUpUser: false });
         }
     }
 }));
