@@ -150,7 +150,26 @@ export const updateIpGeo = async (req, res) => {
 export const deleteIpGeo = async (req, res) => {
     const { id } = req.body;
     try {
-        await getUserIdFromCookie(req);
+        const userId = await getUserIdFromCookie(req);
+        const existingEntry = await IPGeo.findOne({ _id: id, user: userId });
+        if (!existingEntry) {
+            return res.status(404).json({
+                success: false,
+                message: {
+                    title: "Not Found",
+                    suggestion: "No IP Geo entry found for this user with the provided ID."
+                }
+            });
+        };
+        if (existingEntry.user !== userId) {
+            return res.status(403).json({
+                success: false, 
+                message: {
+                    title: "Forbidden",
+                    suggestion: "You do not have permission to delete this IP Geo entry."
+                }
+            });
+        };
         const ipgeo = await IPGeo.findByIdAndDelete(id);
         if (!ipgeo) {
             return res.status(404).json({
