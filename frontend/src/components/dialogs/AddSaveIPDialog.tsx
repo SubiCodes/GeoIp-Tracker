@@ -21,7 +21,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent>
                 <AlertDialogHeader>
-                    <AlertDialogTitle className='text-red-500'>Save a new IP Address</AlertDialogTitle>
+                    <AlertDialogTitle className='text-foreground font-bold'>Save a new IP Address</AlertDialogTitle>
                     <AlertDialogDescription>
                         Enter the IP address you want to save to your list.
                     </AlertDialogDescription>
