@@ -2,6 +2,7 @@ import React from 'react';
 import { MapPin, MoreVertical, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import {
     DropdownMenu,
@@ -12,6 +13,7 @@ import {
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import type { IPGeoData } from '@/store/ipgeoStore';
+import { useIPHistoryStore } from '@/store/ipHistoryStore';
 
 interface AddedIPCardProps {
     data: IPGeoData;
@@ -21,40 +23,64 @@ interface AddedIPCardProps {
 const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
     const position: [number, number] = [data.latitude, data.longitude];
 
+    const ipHistory = useIPHistoryStore((state) => state.ipHistory);
+    const isCurrentIP = ipHistory[0]?.ip === data.ip;
+
+    const handleSetCurrent = () => {
+        // TODO: Implement set current IP logic
+        console.log('Set as current IP:', data.ip);
+    };
+
     return (
         <Card className="hover:shadow-lg transition-shadow">
             <CardHeader>
-                <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                        <CardTitle className="text-lg flex items-center gap-2">
+                <div className="flex items-start justify-between gap-4">
+                    <div className="flex-1 min-w-0">
+                        <CardTitle className="text-lg flex items-center gap-2 flex-wrap">
                             <span className="text-2xl drop-shadow">{data.flag?.emoji}</span>
-                            {data.city}, {data.country}
+                            <span className="truncate">{data.city}, {data.country}</span>
                         </CardTitle>
-                        <CardDescription className="mt-1 flex items-center gap-2">
-                            <span className="font-mono bg-primary/10 px-2 py-0.5 rounded">{data.ip}</span>
-                            <Badge variant="outline" className="ml-2 text-xs border-primary text-primary bg-primary/10">{data.type}</Badge>
+                        <CardDescription className="mt-1 flex items-center gap-2 flex-wrap">
+                            <span className="font-mono bg-primary/10 px-2 py-0.5 rounded text-xs sm:text-sm">{data.ip}</span>
+                            <Badge variant="outline" className="text-xs border-primary text-primary bg-primary/10">{data.type}</Badge>
                         </CardDescription>
                     </div>
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <button
-                                className="p-2 rounded-full hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
-                                aria-label="Open menu"
-                                type="button"
+                    <div className="flex items-center gap-2 flex-shrink-0">
+                        {isCurrentIP ? (
+                            <Badge className="bg-green-500 text-white hover:bg-green-600 whitespace-nowrap">
+                                Current IP
+                            </Badge>
+                        ) : (
+                            <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={handleSetCurrent}
+                                className="whitespace-nowrap text-xs sm:text-sm"
                             >
-                                <MoreVertical className="w-5 h-5 text-muted-foreground" />
-                            </button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem
-                                variant="destructive"
-                                className="text-red-600 focus:text-red-600"
-                                onClick={() => onDelete && onDelete(data.ip)}
-                            >
-                                <Trash2 className="w-4 h-4 mr-2" /> Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                                Set Current
+                            </Button>
+                        )}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button
+                                    className="p-2 rounded-full hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary"
+                                    aria-label="Open menu"
+                                    type="button"
+                                >
+                                    <MoreVertical className="w-5 h-5 text-muted-foreground" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem
+                                    variant="destructive"
+                                    className="text-red-600 focus:text-red-600"
+                                    onClick={() => onDelete && onDelete(data.ip)}
+                                >
+                                    <Trash2 className="w-4 h-4 mr-2" /> Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
                 </div>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -62,17 +88,17 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
                 <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
                         <p className="text-muted-foreground">Region</p>
-                        <p className="font-medium">{data.region}</p>
+                        <p className="font-medium truncate">{data.region}</p>
                     </div>
                     <div>
                         <p className="text-muted-foreground">Timezone</p>
                         <p className="font-medium">{data.timezone?.abbr || 'N/A'}</p>
                     </div>
-                    <div>
+                    <div className="col-span-2 sm:col-span-1">
                         <p className="text-muted-foreground">ISP</p>
                         <p className="font-medium truncate">{data.connection?.isp || 'N/A'}</p>
                     </div>
-                    <div>
+                    <div className="col-span-2 sm:col-span-1">
                         <p className="text-muted-foreground">Coordinates</p>
                         <p className="font-mono text-xs">{data.latitude.toFixed(2)}, {data.longitude.toFixed(2)}</p>
                     </div>
@@ -95,7 +121,7 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
                             </span>
                         </AccordionTrigger>
                         <AccordionContent>
-                            <div className="w-full h-80 rounded-lg overflow-hidden border mt-2 border-primary/20">
+                            <div className="w-full h-64 sm:h-80 rounded-lg overflow-hidden border mt-2 border-primary/20">
                                 <MapContainer
                                     center={position}
                                     zoom={12}
