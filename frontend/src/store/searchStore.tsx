@@ -11,6 +11,9 @@ interface SearchStoreState {
     fetchingRecentSearches: boolean;
     fetchingRecentSearchesError?: string | null;
     fetchRecentSearches: () => Promise<void>;
+    searching: boolean;
+    searchError?: string | null;
+    search: (query: string) => Promise<string[]>;
 }
 
 export const useSearchStore = create<SearchStoreState>((set) => ({
@@ -41,6 +44,34 @@ export const useSearchStore = create<SearchStoreState>((set) => ({
             }
         } finally {
             set({ fetchingRecentSearches: false });
+        }
+    },
+    searching: false,
+    searchError: null,
+    search: async (query: string) => {
+        set({ searching: true, searchError: null });
+        try {
+            const res = await api.post(`/search`, { query });
+            if (res.data && res.data.success && res.data.data) {
+                return res.data.data;
+            }
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                if (msg?.title && msg?.suggestion) {
+                    set({ searchError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ searchError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ searchError: msg.suggestion });
+                } else {
+                    set({ searchError: "Fetching search results failed" });
+                }
+            } else {
+                set({ searchError: (error as Error).message || "Fetching search results failed" });
+            }
+        } finally {
+            set({ searching: false });
         }
     }
 }));
