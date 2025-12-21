@@ -16,7 +16,7 @@ export interface User {
 interface UserAuthState {
     user: User | null,
     validatingUser: boolean,
-    validateUser: (navigate: (path: string) => void) => Promise<void>,
+    validateUser: (navigate: (path: string) => void, fromMain: boolean) => Promise<void>,
     signingInUser: boolean,
     sigInUser: (email: string, password: string, navigate: (path: string) => void) => Promise<void>,
     signInError?: string | null,
@@ -29,18 +29,25 @@ interface UserAuthState {
 const useUserAuthStore = create<UserAuthState>((set) => ({
     user: null,
     validatingUser: false,
-    validateUser: async (navigate: (path: string) => void) => {
+    validateUser: async (navigate: (path: string) => void, fromMain: boolean) => {
         set({ validatingUser: true, user: null });
         try {
             const res = await api.get('/auth/validate-cookie');
             if (res.data && res.data.success && res.data.data) {
                 set({ user: res.data.data });
+                if (fromMain) return;
                 navigate('/home');
             } else {
                 set({ user: null });
+                if (fromMain) {
+                    navigate('/');
+                }
             }
         } catch (e) {
             set({ user: null });
+            if (fromMain) {
+                navigate('/');
+            }
         } finally {
             set({ validatingUser: false });
         }
