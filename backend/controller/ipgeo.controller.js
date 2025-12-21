@@ -148,5 +148,34 @@ export const updateIpGeo = async (req, res) => {
 };
 
 export const deleteIpGeo = async (req, res) => {
-
+    const { id } = req.body;
+    try {
+        await getUserIdFromCookie(req);
+        const ipgeo = await IPGeo.findByIdAndDelete(id);
+        if (!ipgeo) {
+            return res.status(404).json({
+                success: false,
+                message: {
+                    title: "Not Found",
+                    suggestion: "No IP Geo entry found with the provided ID."
+                }
+            });
+        };
+        return res.status(200).json({
+            success: true,
+            message: {
+                title: "IP Geo Deleted",
+                suggestion: "IP Geo entry has been successfully deleted."
+            },
+        });
+    } catch (error) {
+        const isUnauthorized = error.message.includes("Unauthorized");
+        return res.status(isUnauthorized ? 401 : 400).json({
+            success: false,
+            message: {
+                title: isUnauthorized ? "Unauthorized" : "Invalid request",
+                suggestion: error.message
+            }
+        });
+    }
 };
