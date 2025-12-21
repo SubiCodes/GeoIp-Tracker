@@ -13,7 +13,7 @@ import {
 import { Button } from '../ui/button';
 import { useIPGeoStore } from '@/store/ipgeoStore';
 import { MoonLoader } from 'react-spinners';
-
+import { ToastContainer, toast } from "react-toastify";
 
 interface AddSaveIPDialogProps {
     open: boolean;
@@ -54,6 +54,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
             setIp("");
             setDescription("");
             onOpenChange?.(false);
+            toast.success("IP address saved successfully!");
         };
     };
     const handleIpBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
@@ -108,6 +109,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                     </div>
                 </AlertDialogFooter>
             </AlertDialogContent>
+            <ToastContainer/>
         </AlertDialog>
     );
 };
