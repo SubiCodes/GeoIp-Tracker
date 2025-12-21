@@ -3,16 +3,39 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import useUserAuthStore from '@/store/user-authStore';
+import { BeatLoader } from "react-spinners";
+import { useNavigate } from 'react-router-dom';
 
 const SignUp: React.FC = () => {
+
+    const navigate = useNavigate();
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState<string | null>(null);
 
-    const handleSubmit = () => {
-        // Handle sign up logic here
-        console.log('Sign up:', { name, email, password, confirmPassword });
+    const signingUpUser = useUserAuthStore((state) => state.signingUpUser);
+    const signUpError = useUserAuthStore((state) => state.signUpError);
+    const signUpUser = useUserAuthStore((state) => state.signUpUser);
+
+
+    const handleSubmit = async () => {
+        setError(null);
+        if (!name.trim() || !email.trim() || !password.trim() || !confirmPassword.trim()) {
+            setError("All fields are required!");
+            return;
+        };
+        if (password !== confirmPassword) {
+            setError("Passwords do not match!");
+            return;
+        };
+        await signUpUser(name, email, password, navigate);
+        if (signUpError) {
+            setError(signUpError);
+        };
     };
 
     const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -74,9 +97,14 @@ const SignUp: React.FC = () => {
                         onKeyPress={handleKeyPress}
                     />
                 </div>
-                <Button onClick={handleSubmit} className="w-full">
-                    Create account
+                <Button onClick={handleSubmit} className="w-full" disabled={signingUpUser}>
+                    {signingUpUser ? <BeatLoader size={10} color="#fff" /> : 'Create account'}
                 </Button>
+                {error && (
+                    <div className="mt-2 text-sm text-red-600 bg-red-100 rounded px-3 py-2">
+                        {error}
+                    </div>
+                )}
             </CardContent>
             <CardFooter className="flex flex-col space-y-4">
                 <div className="text-sm text-muted-foreground text-center">
