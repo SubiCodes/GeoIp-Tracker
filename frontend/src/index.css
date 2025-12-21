@@ -3,6 +3,16 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.leaflet-container {
+  z-index: 0 !important;
+}
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-popup {
+  z-index: 0 !important;
+}
+
 :root {
   --radius: 0.65rem;
   --background: oklch(1 0 0);

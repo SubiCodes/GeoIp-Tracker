@@ -6,6 +6,7 @@ import AddedIPCard from '@/components/cards/AddedIPCard';
 import { useIPGeoStore } from '@/store/ipgeoStore';
 import ErrorWithRetryCard from '@/components/cards/ErrorWithRetryCard';
 import { MoonLoader } from 'react-spinners';
+import AddSaveIPDialog from '@/components/dialogs/AddSaveIPDialog';
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
@@ -76,6 +77,7 @@ function Home() {
           <div className="text-center text-muted-foreground">No saved IP addresses found.</div>
         )}
       </div>
+      <AddSaveIPDialog open={isAddIPModalOpen} onOpenChange={setIsAddIPModalOpen} />
     </div>
   );
 }
