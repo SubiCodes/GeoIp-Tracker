@@ -20,8 +20,12 @@ interface IPHistoryDialogProps {
 
 function IPHistoryDialog({ triggerButton }: IPHistoryDialogProps) {
     const ipHistory = useIPHistoryStore((state) => state.ipHistory);
+    const deletingIPHistory = useIPHistoryStore((state) => state.deletingIPHistory);
+    const deleteHistoryItem = useIPHistoryStore((state) => state.deleteHistoryItem);
+
     const [selectedIPs, setSelectedIPs] = useState<Set<string>>(new Set());
     const [isAllSelected, setIsAllSelected] = useState(false);
+
 
     // Reset selection when dialog opens
     useEffect(() => {
@@ -52,8 +56,9 @@ function IPHistoryDialog({ triggerButton }: IPHistoryDialogProps) {
     };
 
     const handleDeleteSelected = () => {
-        // TODO: Implement bulk delete logic
-        console.log('Delete selected IPs:', Array.from(selectedIPs));
+        deleteHistoryItem(Array.from(selectedIPs));
+        setSelectedIPs(new Set());
+        setIsAllSelected(false);
     };
 
     return (
@@ -100,6 +105,7 @@ function IPHistoryDialog({ triggerButton }: IPHistoryDialogProps) {
                                         size="sm"
                                         onClick={handleDeleteSelected}
                                         className="h-8"
+                                        disabled={deletingIPHistory}
                                     >
                                         <Trash2 className="h-4 w-4 mr-1" />
                                         Delete

@@ -14,6 +14,8 @@ interface IPHistoryStoreState {
     fetchingIPHistoryError?: string | null;
     fetchIPHistory: () => Promise<void>;
     addHistoryItem: (ip: string) => void;
+    deletingIPHistory: boolean;
+    deleteHistoryItem: (id: string[]) => void;
 }
 
 export const useIPHistoryStore = create<IPHistoryStoreState>((set) => ({
@@ -69,4 +71,28 @@ export const useIPHistoryStore = create<IPHistoryStoreState>((set) => ({
             }
         }
     },
+    deletingIPHistory: false,
+    deleteHistoryItem: async (id: string[]) => {
+        try {
+            toast.loading("Removing selected IPs from history...");
+            await api.post(`/ip-history/delete`, { ids: id });
+            set((state) => ({ ipHistory: state.ipHistory.filter((item) => !id.includes(item._id || '')) }));
+            toast.success("Selected IPs removed from history!");
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                if (msg?.title && msg?.suggestion) {
+                    toast.error(`${msg.title}: ${msg.suggestion}`);
+                } else if (msg?.title) {
+                    toast.error(msg.title);
+                } else if (msg?.suggestion) {
+                    toast.error(msg.suggestion);
+                } else {
+                    toast.error("Fetching IP History failed");
+                }
+            } else {
+                toast.error((error as Error).message || "Fetching IP History failed");
+            }
+        }
+    }
 }));
