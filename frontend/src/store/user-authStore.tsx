@@ -83,16 +83,24 @@ const useUserAuthStore = create<UserAuthState>((set) => ({
     signUpUser: async (name: string, email: string, password: string, navigate: (path: string) => void) => {
         set({ signingUpUser: true, user: null, signUpError: null });
         try {
-            const res =await api.post('/auth/signup', { userName: name, email, password });
+            const res = await api.post('/auth/signup', { userName: name, email, password });
             if (res.data && res.data.success && res.data.data) {
                 set({ user: res.data.data, signUpError: null });
                 navigate('/home');
-            };
+            }
         } catch (error) {
             set({ user: null });
             if (axios.isAxiosError(error)) {
                 const msg = error.response?.data?.message;
-                set({ signUpError: msg?.title || "Signup failed" });
+                if (msg?.title && msg?.suggestion) {
+                    set({ signUpError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ signUpError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ signUpError: msg.suggestion });
+                } else {
+                    set({ signUpError: "Signup failed" });
+                }
             } else {
                 set({ signUpError: (error as Error).message || "Signup failed" });
             }
