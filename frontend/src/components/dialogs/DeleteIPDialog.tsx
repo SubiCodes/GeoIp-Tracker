@@ -16,10 +16,11 @@ interface AddSaveIPDialogProps {
     open: boolean;
     onOpenChange?: (open: boolean) => void;
     ipId?: string | null;
+    setIpToNull: () => void;
 }
 
 
-function DeleteIPDialog({ open, onOpenChange, ipId }: AddSaveIPDialogProps) {
+function DeleteIPDialog({ open, onOpenChange, ipId, setIpToNull }: AddSaveIPDialogProps) {
     const deleteIPGeoData = useIPGeoStore((state) => state.deleteIPGeoData);
 
     const handleDelete = async () => {
@@ -33,6 +34,7 @@ function DeleteIPDialog({ open, onOpenChange, ipId }: AddSaveIPDialogProps) {
                 }
             );
             onOpenChange?.(false);
+            setIpToNull();
         }
     }
     return (

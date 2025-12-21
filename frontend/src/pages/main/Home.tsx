@@ -7,7 +7,7 @@ import { useIPGeoStore } from '@/store/ipgeoStore';
 import ErrorWithRetryCard from '@/components/cards/ErrorWithRetryCard';
 import { MoonLoader } from 'react-spinners';
 import AddSaveIPDialog from '@/components/dialogs/AddSaveIPDialog';
-import { data } from 'react-router-dom';
+import DeleteIPDialog from '@/components/dialogs/DeleteIPDialog';
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
@@ -81,6 +81,7 @@ function Home() {
         )}
       </div>
       <AddSaveIPDialog open={isAddIPModalOpen} onOpenChange={setIsAddIPModalOpen}/>
+      <DeleteIPDialog open={mountedForDeletion !== null} setIpToNull={() => setMountedForDeletion(null)}/>
     </div>
   );
 }
