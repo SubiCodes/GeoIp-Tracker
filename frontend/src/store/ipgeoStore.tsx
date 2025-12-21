@@ -52,6 +52,10 @@ interface IPGeoStoreState {
     fetchingCurrentIPGeo: boolean,
     fetchCurrentIPGeo: () => Promise<void>,
     fetcingCurrentIPGeoError?: string | null,
+    ipGeoDatas: IPGeoData[] | null,
+    fetchingIPGeoDatas: boolean,
+    fetchIPGeoDatas: () => Promise<void>,
+    fetcingIPGeoDatasError?: string | null,
 };
 
 export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
@@ -86,4 +90,34 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
         }
     },
     fetcingCurrentIPGeoError: null,
+    ipGeoDatas: null,
+    fetchingIPGeoDatas: false,
+    fetchIPGeoDatas: async () => {
+        set({ fetchingIPGeoDatas: true, fetcingIPGeoDatasError: null, ipGeoDatas: null });
+        try {
+            const res = await api.get('/ipgeo/saved');
+            if (res.data && res.data.success && res.data.data) {
+                set({ ipGeoDatas: res.data.data });
+            };
+        } catch (error) {
+            set({ currentIPGeo: null });
+            if (axios.isAxiosError(error)) {
+                const msg = error.response?.data?.message;
+                if (msg?.title && msg?.suggestion) {
+                    set({ fetcingIPGeoDatasError: `${msg.title}: ${msg.suggestion}` });
+                } else if (msg?.title) {
+                    set({ fetcingIPGeoDatasError: msg.title });
+                } else if (msg?.suggestion) {
+                    set({ fetcingIPGeoDatasError: msg.suggestion });
+                } else {
+                    set({ fetcingIPGeoDatasError: "Unable to get your saved IP geolocations." });
+                }
+            } else {
+                set({ fetcingIPGeoDatasError: (error as Error).message || "Unable to get your saved IP geolocations." });
+            }
+        } finally {
+            set({ fetchingIPGeoDatas: false });
+        }
+    },
+    fetcingIPGeoDatasError: null,
 }));
