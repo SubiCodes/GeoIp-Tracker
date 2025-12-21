@@ -1,23 +1,35 @@
 import SearchHistory from "../models/searchHistory.model.js";
 import { getUserIdFromCookie } from "../util/getUserIdFromCookie.js";
+import { getWorkingCloseMatches } from "../util/ipMatches.js";
 
 export const addSearchQuery = async (req, res) => {
     const { query } = req.body;
     try {
-        const id = await getUserIdFromCookie(req);
-        let searchHistory = await SearchHistory.findOne({ user: id });
+        const userId = await getUserIdFromCookie(req);
+        let searchHistory = await SearchHistory.findOne({ user: userId });
         if (!searchHistory) {
-            searchHistory = new SearchHistory({ user: id, queries: [query] });
+            searchHistory = new SearchHistory({ user: userId, queries: [query] });
         } else {
-            searchHistory.queries.push(query);
+            searchHistory.queries = searchHistory.queries.filter(q => q !== query);
+            searchHistory.queries.unshift(query);
+            // Keep only the last 10 queries
+            if (searchHistory.queries.length > 10) {
+                searchHistory.queries = searchHistory.queries.slice(0, 10);
+            }
         }
+
         await searchHistory.save();
+        const closeMatches = await getWorkingCloseMatches(query, 5, 50, 10); 
+
         return res.status(200).json({
             success: true,
-            data: searchHistory,
+            data: {
+                searchHistory
+            },
+            resutls: closeMatches,
             message: {
-                title: 'Search history updated',
-                suggestion: 'Query added to your search history.'
+                title: 'Search completed',
+                suggestion: 'Query added to search history and close matches retrieved.'
             }
         });
     } catch (error) {
@@ -38,4 +50,4 @@ export const addSearchQuery = async (req, res) => {
             }
         });
     }
-}
+};
