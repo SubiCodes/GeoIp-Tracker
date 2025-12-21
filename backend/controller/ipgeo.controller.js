@@ -23,8 +23,13 @@ export const createIpGeo = async (req, res) => {
             });
         };
         //CALL THE GEOIP SERVICE AND CREATE THE ENTRY
-        const ipgeo = await fetch('https://ipwho.is/' + validIp);
-        console.log("Fetching IP Geo data for IP:", validIp);
+        const response = await fetch('https://ipwho.is/' + validIp);
+        const ipgeo = await response.json(); 
+
+        return res.status(200).json({
+            success: true,
+            data: ipgeo,
+        });
     } catch (error) {
         const isUnauthorized = error.message.includes("Unauthorized");
         return res.status(isUnauthorized ? 401 : 400).json({
