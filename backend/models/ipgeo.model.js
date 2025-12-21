@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ipLookupSchema = new mongoose.Schema({
+const ipgeoSchema = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -71,10 +71,6 @@ const ipLookupSchema = new mongoose.Schema({
     timestamps: true
 });
 
-// Compound index for user queries
-ipLookupSchema.index({ userId: 1, createdAt: -1 });
-ipLookupSchema.index({ userId: 1, updatedAt: -1 });
+const IPGeo = mongoose.model("IPGeo", ipgeoSchema);
 
-const IPLookup = mongoose.model("IPLookup", ipLookupSchema);
-
-export default IPLookup;
+export default IPGeo;
