@@ -11,8 +11,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useIPGeoStore, type IPGeoData } from '@/store/ipgeoStore';
-
+import type { IPGeoData } from '@/store/ipgeoStore';
 
 interface AddedIPCardProps {
     data: IPGeoData;
@@ -21,8 +20,6 @@ interface AddedIPCardProps {
 
 const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
     const position: [number, number] = [data.latitude, data.longitude];
-
-    const deletingIPGeoData = useIPGeoStore((state) => state.deletingIPGeoData);
 
     return (
         <Card className="hover:shadow-lg transition-shadow">
@@ -53,7 +50,6 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
                                 variant="destructive"
                                 className="text-red-600 focus:text-red-600"
                                 onClick={() => onDelete && onDelete(data.ip)}
-                                disabled={deletingIPGeoData.includes(data.ip)}
                             >
                                 <Trash2 className="w-4 h-4 mr-2" /> Delete
                             </DropdownMenuItem>
