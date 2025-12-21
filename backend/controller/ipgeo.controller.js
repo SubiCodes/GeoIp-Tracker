@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import IPGeo from "../models/ipgeo.model.js";
-import { validateIp } from "@/utils/validateIp";
+import { validateIp } from "../util/validateIp.js";
+import { getUserIdFromCookie } from "../util/getUserIdFromCookie.js";
 import { v4 as uuidv4 } from 'uuid';
 
 export const createIpGeo = async (req, res) => {

@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { Request } from "express";
 
 /**
  * Extracts the userId from a JWT stored in cookies.
@@ -8,7 +7,7 @@ import { Request } from "express";
  * @returns userId as string
  * @throws Error if no token or invalid token
  */
-export const getUserIdFromCookie = (req: Request, cookieName = "authToken"): string => {
+export const getUserIdFromCookie = (req, cookieName = "authToken") => {
   const token = req.cookies?.[cookieName];
 
   if (!token) {
@@ -16,7 +15,7 @@ export const getUserIdFromCookie = (req: Request, cookieName = "authToken"): str
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: string };
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded.userId;
   } catch (err) {
     throw new Error("Unauthorized: Invalid or expired token");

@@ -6,7 +6,7 @@ import { isIP } from "is-ip";
  * @returns the valid IP string
  * @throws Error if IP is missing or invalid
  */
-export const validateIp = (ip?: string): string => {
+export const validateIp = (ip) => {
   if (!ip) {
     throw new Error("IP required: Please provide an IP address.");
   }
