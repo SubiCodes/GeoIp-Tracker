@@ -31,8 +31,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
     const addingIPGeoDataError = useIPGeoStore((state) => state.addingIPGeoDataError);
 
 
-    // Only allow valid IPv4/IPv6 characters on input
-    const allowedIpPattern = /^[0-9a-fA-F:.]*$/;
+    // Only use isIP for validation, allow any input
     const handleIpChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setIp(e.target.value);
         setIpError(null);
@@ -43,15 +42,13 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
         e.preventDefault();
         if (!validateIp(ip)) {
             setIpError("Please enter a valid IPv4 or IPv6 address.");
+            toast.error("Please enter a valid IPv4 or IPv6 address.");
             return;
         };
-        const res = await addIPGeoData(ip, description);
-        if (typeof res === "string") {
-            toast.error(res);
-            return;
-        }
+        await addIPGeoData(ip, description);
         if (addingIPGeoDataError) {
             setIpError(addingIPGeoDataError);
+            toast.error(addingIPGeoDataError);
             return;
         };
         if (!addingIPGeoDataError) {
@@ -61,13 +58,7 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
             toast.success("IP address saved successfully!");
         };
     };
-    const handleIpBeforeInput = (e: React.FormEvent<HTMLInputElement>) => {
-        const inputEvent = e.nativeEvent as InputEvent;
-        const nextValue = e.currentTarget.value + (inputEvent.data || "");
-        if (!allowedIpPattern.test(nextValue)) {
-            e.preventDefault();
-        }
-    };
+
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -89,7 +80,6 @@ const AddSaveIPDialog: React.FC<AddSaveIPDialogProps> = ({ open, onOpenChange })
                             placeholder="e.g. 8.8.8.8"
                             value={ip}
                             onChange={handleIpChange}
-                            onBeforeInput={handleIpBeforeInput}
                         />
                         {ipError && <p className="text-xs text-red-500 mt-1">{ipError}</p>}
                     </div>
