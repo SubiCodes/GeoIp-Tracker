@@ -68,7 +68,6 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
             if (res.data && res.data.success) {
                 set({ currentIPGeo: res.data });
             };
-            console.log(res.data);
         } catch (error) {
             set({ currentIPGeo: null });
             if (axios.isAxiosError(error)) {
@@ -95,7 +94,7 @@ export const useIPGeoStore = create<IPGeoStoreState>((set) => ({
     fetchIPGeoDatas: async () => {
         set({ fetchingIPGeoDatas: true, fetcingIPGeoDatasError: null, ipGeoDatas: null });
         try {
-            const res = await api.get('/ipgeo/saved');
+            const res = await api.get('/ipgeo');
             if (res.data && res.data.success && res.data.data) {
                 set({ ipGeoDatas: res.data.data });
             };
