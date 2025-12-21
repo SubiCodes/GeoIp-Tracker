@@ -107,6 +107,11 @@ function Home() {
   const fetchCurrentIPGeo = useIPGeoStore((state) => state.fetchCurrentIPGeo);
   const fetcingCurrentIPGeoError = useIPGeoStore((state) => state.fetcingCurrentIPGeoError);
 
+  const ipGeoDatas = useIPGeoStore((state) => state.ipGeoDatas);
+  const fetchingIPGeoDatas = useIPGeoStore((state) => state.fetchingIPGeoDatas);
+  const fetchIPGeoDatas = useIPGeoStore((state) => state.fetchIPGeoDatas);
+  const fetcingIPGeoDatasError = useIPGeoStore((state) => state.fetcingIPGeoDatasError);
+
   React.useEffect(() => {
     fetchCurrentIPGeo();
   }, []);
