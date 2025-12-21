@@ -180,7 +180,7 @@ export const validateUserCookie = async (req, res) => {
                 title: "Token valid",
                 suggestion: "User is authenticated."
             },
-            data: decoded
+            data: user
         });
     } catch (error) {
         return res.status(401).json({

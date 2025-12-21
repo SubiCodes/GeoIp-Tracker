@@ -14,6 +14,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
   const validatingUser = useUserAuthStore((state) => state.validatingUser);
   const validateUser = useUserAuthStore((state) => state.validateUser);
+  const user = useUserAuthStore((state) => state.user);
 
   React.useEffect(() => {
     validateUser(navigate, true);
@@ -38,11 +39,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <LogoutDialog />
             <div className="flex items-center gap-3 rounded-lg bg-muted px-3 py-2 border">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground font-semibold text-sm">
-                U
+                {user?.userName ? user.userName.charAt(0).toUpperCase() : "U"}
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-medium">User</p>
-                <p className="text-xs text-muted-foreground">user@example.com</p>
+                <p className="text-sm font-medium">{user?.userName ?? "User"}</p>
+                <p className="text-xs text-muted-foreground">{user?.email ?? ""}</p>
               </div>
             </div>
           </div>
