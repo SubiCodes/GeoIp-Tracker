@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import axios from 'axios'
+import type { IPGeoData } from './ipgeoStore';
 
 const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/',
@@ -13,7 +14,10 @@ interface SearchStoreState {
     fetchRecentSearches: () => Promise<void>;
     searching: boolean;
     searchError?: string | null;
-    search: (query: string) => Promise<string[]>;
+    search: (query: string) => Promise<IPGeoData[]>;
+    suggestions: IPGeoData[];
+    fetchingSuggestions: boolean;
+    fetchSuggestions: (query: string) => Promise<void>;
 }
 
 export const useSearchStore = create<SearchStoreState>((set) => ({
@@ -72,6 +76,21 @@ export const useSearchStore = create<SearchStoreState>((set) => ({
             }
         } finally {
             set({ searching: false });
+        }
+    },
+    suggestions: [],
+    fetchingSuggestions: false,
+    fetchSuggestions: async (query: string ) => {
+        set({ fetchingSuggestions: true });
+        try {
+            const res = await api.post('/search/suggestions', { query });
+            if (res.data && res.data.success && res.data.data) {
+                set({ suggestions: res.data.data });
+            }
+        } catch (error) {
+            console.error("Fetching suggestions failed:", error);
+        } finally {
+            set({ fetchingSuggestions: false });
         }
     }
 }));
