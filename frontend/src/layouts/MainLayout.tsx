@@ -1,4 +1,5 @@
 import LoadingScreen from "@/components/LoadingScreen";
+import LogoutDialog from "@/components/dialogs/LogoutDialog";
 import useUserAuthStore from "@/store/user-authStore";
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -94,6 +95,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                 </button>
               );
             })}
+
+            {/* Logout */}
+            <LogoutDialog />
           </nav>
 
           {/* User Info Section */}
@@ -119,7 +123,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         )}
 
         {/* Main Content */}
-        <main className="flex-1 overflow-y-auto h-[calc(100vh-4rem)] p-6 md:p-8 ">
+        <main className="flex-1 overflow-y-auto h-[calc(100vh-4rem)] p-6 md:p-8">
           {children}
         </main>
       </div>
