@@ -7,6 +7,7 @@ import { useIPGeoStore } from '@/store/ipgeoStore';
 import ErrorWithRetryCard from '@/components/cards/ErrorWithRetryCard';
 import { MoonLoader } from 'react-spinners';
 import { useIPHistoryStore } from '@/store/ipHistoryStore';
+import SearchDialog from '@/components/dialogs/SearchDialog';
 
 function Home() {
   const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
@@ -15,7 +16,7 @@ function Home() {
   const displayingIPGeoData = useIPGeoStore((state) => state.displayingIPGeoData);
   const displayingIPGeoDataError = useIPGeoStore((state) => state.displayingIPGeoDataError);
   const displayIPGeoData = useIPGeoStore((state) => state.displayIPGeoData);
-  
+
   const ipHistory = useIPHistoryStore((state) => state.ipHistory);
   const fetchIPHistory = useIPHistoryStore((state) => state.fetchIPHistory);
 
@@ -39,13 +40,15 @@ function Home() {
             View your current IP address and geolocation details
           </p>
         </div>
-        <Button
-          onClick={() => setIsAddIPModalOpen(true)}
-          className="gap-2"
-        >
-          <Search className="h-4 w-4" />
-          Search IP
-        </Button>
+        <SearchDialog triggerButton={
+          <Button
+            onClick={() => setIsAddIPModalOpen(true)}
+            className="gap-2"
+          >
+            <Search className="h-4 w-4" />
+            Search IP
+          </Button>
+        } />
       </div>
 
       {/* Content Area */}
