@@ -70,7 +70,7 @@ const AddedIPCard: React.FC<AddedIPCardProps> = ({ data, onDelete }) => {
               </span>
             </AccordionTrigger>
             <AccordionContent>
-              <div className="w-full h-48 rounded-lg overflow-hidden border mt-2 border-primary/20">
+              <div className="w-full h-80 rounded-lg overflow-hidden border mt-2 border-primary/20">
                 <MapContainer
                   center={position}
                   zoom={12}

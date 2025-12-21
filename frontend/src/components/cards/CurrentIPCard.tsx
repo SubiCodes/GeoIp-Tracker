@@ -33,7 +33,7 @@ const CurrentIPCard: React.FC<CurrentIPCardProps> = ({ data }) => {
 
             <CardContent className="pt-6 space-y-6">
                 {/* Map */}
-                <div className="w-full h-64 rounded-lg overflow-hidden border-2 border-primary/20">
+                <div className="w-full h-80 rounded-lg overflow-hidden border-2 border-primary/20">
                     <MapContainer
                         center={position}
                         zoom={12}
