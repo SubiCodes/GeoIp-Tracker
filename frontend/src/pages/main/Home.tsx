@@ -21,9 +21,11 @@ function Home() {
 
   const fetchCurrentIPGEO = async () => {
     await fetchIPHistory();
-    const currentIP = ipHistory.length > 0 ? ipHistory[0].ip : undefined;
+    const freshHistory = useIPHistoryStore.getState().ipHistory;
+    const currentIP = freshHistory.length > 0 ? freshHistory[0].ip : undefined;
     await displayIPGeoData(currentIP);
   };
+
 
   React.useEffect(() => {
     fetchCurrentIPGEO();
