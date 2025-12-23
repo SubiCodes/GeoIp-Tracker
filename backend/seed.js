@@ -34,7 +34,7 @@ const generateUniqueUser = async () => {
 const seedUser = async () => {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.DATABASE_URL || process.env.MONGODB_URI);
+    await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
     // Generate unique user data
