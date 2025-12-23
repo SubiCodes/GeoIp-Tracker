@@ -1,22 +1,23 @@
-// scripts/seed.js or scripts/createUser.js
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt'; // or bcryptjs
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
+import { v4 as uuidv4 } from 'uuid'; // Install: npm install uuid
 
-// Import your User model
 import User from './models/user.model.js';
 
 dotenv.config();
 
 const generateUniqueUser = async () => {
-  let username;
+  let userName;
+  let userId;
   let email;
   let exists = true;
 
   while (exists) {
     // Generate random 4-digit number
-    const randomNumbers = Math.floor(1000 + Math.random() * 9000); // Ensures 4 digits
-    username = 'user';
+    const randomNumbers = Math.floor(1000 + Math.random() * 9000);
+    userName = 'user';
+    userId = uuidv4(); // Generate unique userId
     email = `seed.email.${randomNumbers}@gmail.com`;
     
     // Check if email exists in database
@@ -28,24 +29,20 @@ const generateUniqueUser = async () => {
     }
   }
 
-  return { username, email };
+  return { userName, userId, email };
 };
 
 const seedUser = async () => {
   try {
-    // Connect to MongoDB
     await mongoose.connect(process.env.MONGO_URI);
     console.log('Connected to MongoDB');
 
-    // Generate unique user data
-    const { username, email } = await generateUniqueUser();
-
-    // Hash the password
+    const { userName, userId, email } = await generateUniqueUser();
     const hashedPassword = await bcrypt.hash('dev12345', 10);
 
-    // Create user
     const user = await User.create({
-      username: username,
+      userId: userId,
+      userName: userName,
       email: email,
       password: hashedPassword
     });
@@ -53,6 +50,7 @@ const seedUser = async () => {
     console.log('✅ User created successfully!');
     console.log('==========================================');
     console.log(`Email: ${email}`);
+    console.log(`Username: ${userName}`);
     console.log('Password: dev12345');
     console.log('==========================================');
 
