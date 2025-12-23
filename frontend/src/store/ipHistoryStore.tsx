@@ -52,7 +52,7 @@ export const useIPHistoryStore = create<IPHistoryStoreState>((set) => ({
         try {
             toast.loading("Adding IP to history...");
             const res = await api.post('/ip-history', { ip });
-            set((state) => ({ ipHistory: [...state.ipHistory, res.data] }));
+            set((state) => ({ ipHistory: [res.data, ...state.ipHistory] }));
             toast.dismiss();
             toast.success("New IP set as current IP and added to history!");
         } catch (error) {
