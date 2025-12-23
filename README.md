@@ -4,8 +4,8 @@ A full-stack application for tracking IP address geolocation information with us
 
 ## 🚀 Deployment Links
 
-- **Frontend:** [Add deployment URL here]
-- **Backend API:** [Add deployment URL here]
+- **Frontend:** (https://geoip-tracker.vercel.app/)
+- **Backend API:** (https://geoip-tracker-production.up.railway.app)
 
 ## 💻 Running Locally
 
@@ -13,8 +13,7 @@ A full-stack application for tracking IP address geolocation information with us
 
 - Node.js (v14 or higher)
 - npm or yarn
-- MySQL/PostgreSQL database
-
+- 
 ### Backend Setup
 
 1. Navigate to the backend directory:
@@ -29,24 +28,12 @@ npm install
 
 3. Create a `.env` file in the backend directory with the following variables:
 ```env
-PORT=3000
-DATABASE_URL=your_database_connection_string
-DB_HOST=localhost
-DB_PORT=3306
-DB_NAME=your_database_name
-DB_USER=your_database_user
-DB_PASSWORD=your_database_password
-JWT_SECRET=your_jwt_secret_key
-GEOLOCATION_API_URL=your_geolocation_api_url
+JWT_SECRET=your_secret_key
+MONGO_URI=your_database_connection_string
+FRONTEND_URI=defaults to localhsot if not provided
 ```
 
-4. Run database migrations and seeders:
-```bash
-npm run migrate
-npm run seed
-```
-
-5. Start the development server:
+4. Start the development server:
 ```bash
 npm run dev
 ```
@@ -65,8 +52,7 @@ npm install
 
 3. Create a `.env` file in the frontend directory with the following variables:
 ```env
-VITE_API_BASE_URL=http://localhost:3000
-VITE_GEOLOCATION_API_URL=your_geolocation_api_url
+VITE_API_URL=link to your backend default to 3000
 ```
 
 4. Start the development server:
@@ -84,7 +70,7 @@ The application should now be running on `http://localhost:5173` (frontend) and 
 
 **Implementation:**
 
-[Space for your description]
+Implemented JWT authentication with route protection. Auth pages check for valid tokens on mount and redirect authenticated users to the dashboard automatically.
 
 ---
 
@@ -98,7 +84,7 @@ The application should now be running on `http://localhost:5173` (frontend) and 
 
 **Implementation:**
 
-[Space for your description]
+Upload use credentials 
 
 ---
 
