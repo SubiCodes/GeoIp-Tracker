@@ -84,7 +84,7 @@ Implemented JWT authentication with route protection. Auth pages check for valid
 
 **Implementation:**
 
-Upload use credentials 
+Ask users for the email and login then check if it already exists or match the format we need. Redirect the uer to the home page once successful. Use this commands to seed a user: cd backend, npm run seed.
 
 ---
 
@@ -94,7 +94,7 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
+Valdite user cookie with JWT and used the open source API '`https://ipwho.is/' to get location information about the current IP of the user. Use the geo location data to dispaly the map using react-leaflet library
 
 ---
 
@@ -107,7 +107,7 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
+Used a global state management(zustand) to trach the newly added IP's and used the latest uploaded one as the displayed IP.  Passed it in the database as well to keep track of what the users IP's are.
 
 ---
 
@@ -117,7 +117,7 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
+Fetch the users IP's from the backend and store them to the global state management to prevent the need of refresh to update the UI. Once the user removed a IP in the history the app checks again whats the lates IP exists. If there are no IP left in the store or DB, the app reeverts back to the use of the current users IP
 
 ---
 
@@ -127,8 +127,7 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
-
+Used zustand and mongodb to handle the history of IP's gracefully.
 ---
 
 ### 7. Click History to Display (Optional)
@@ -137,7 +136,7 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
+Able to set an IP in the history list as the current IP again by simply pusing it to the top.
 
 ---
 
@@ -147,7 +146,7 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
+Added the checkbox feature using the ShadCN library
 
 ---
 
@@ -157,28 +156,8 @@ Upload use credentials
 
 **Implementation:**
 
-[Space for your description]
+Displayed the map by getting the geolocation information (longitude, latitude) and passing it to the reac-leaflet library to display and pin the exact location
 
 ---
 
-## 🧪 Test Credentials
 
-After running the seeder, you can use these credentials to login:
-
-- **Email:** [Add seeded email]
-- **Password:** [Add seeded password]
-
-## 🛠️ Technologies Used
-
-### Frontend
-- [List your frontend technologies]
-
-### Backend
-- [List your backend technologies]
-
-### Database
-- [Database technology used]
-
-## 📝 Notes
-
-[Add any additional notes or considerations here]
