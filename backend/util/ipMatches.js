@@ -1,7 +1,3 @@
-/**
- * Get N working IP close matches for a user query using ipwho.is
- * ALWAYS checks the exact IP first, then adds close matches
- */
 export async function getWorkingCloseMatches(ip, count = 5, maxAttempts = 50, parallelBatch = 5) {
   const matches = [];
   const seenIPs = new Set(); // Avoid duplicates
@@ -20,20 +16,21 @@ export async function getWorkingCloseMatches(ip, count = 5, maxAttempts = 50, pa
     console.log("Exact IP not found, generating close matches...");
   }
   
-  // STEP 2: If we still need more results, generate close matches
+  // STEP 2: Generate close matches if needed
   let attempts = 0;
   
   while (matches.length < count && attempts < maxAttempts) {
     // Generate a batch of candidates
-    const batch = Array.from({ length: parallelBatch }, () => {
-      let candidate;
-      do {
+    const batch = [];
+    for (let i = 0; i < parallelBatch; i++) {
+      let candidate = generateCloseIP(ip);
+      // Avoid duplicates
+      while (seenIPs.has(candidate)) {
         candidate = generateCloseIP(ip);
-      } while (seenIPs.has(candidate)); // Avoid duplicates
-      
+      }
       seenIPs.add(candidate);
-      return candidate;
-    });
+      batch.push(candidate);
+    }
     
     attempts += batch.length;
     
