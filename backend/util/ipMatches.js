@@ -1,4 +1,4 @@
-export async function generateCloseIP(ip, count = 5, maxAttempts = 50, parallelBatch = 5) {
+export async function getWorkingCloseMatches(ip, count = 5, maxAttempts = 50, parallelBatch = 5) {
   const matches = [];
   const seenIPs = new Set(); // Avoid duplicates
   
