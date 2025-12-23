@@ -70,28 +70,6 @@ function SearchDialog({ triggerButton }: SearchDialogProps) {
         return ipv4Pattern.test(trimmedIP) || ipv6Pattern.test(trimmedIP);
     };
 
-    const validatePartialIP = (ip: string): boolean => {
-        const trimmedIP = ip.trim();
-        
-        // Allow partial IPv4 (e.g., "12", "12.34", "12.34.56")
-        const partialIPv4Pattern = /^(\d{1,3})(\.(\d{1,3})?)?(\.(\d{1,3})?)?(\.(\d{1,3})?)?$/;
-        
-        // Allow partial IPv6 (e.g., "2001:", "2001:db8:")
-        const partialIPv6Pattern = /^([0-9a-fA-F]{0,4}:){0,7}[0-9a-fA-F]{0,4}$/;
-        
-        if (partialIPv4Pattern.test(trimmedIP)) {
-            // Validate each part doesn't exceed 255
-            const parts = trimmedIP.split('.');
-            return parts.every(part => {
-                if (part === '') return true;
-                const num = parseInt(part);
-                return !isNaN(num) && num >= 0 && num <= 255;
-            });
-        }
-        
-        return partialIPv6Pattern.test(trimmedIP);
-    };
-
     const handleSearch = async (searchQuery: string) => {
         if (!searchQuery.trim()) {
             setValidationError("Please enter an IP address");

@@ -11,8 +11,6 @@ import SearchDialog from '@/components/dialogs/SearchDialog';
 import IPHistoryDialog from '@/components/dialogs/IPHistoryDialog';
 
 function Home() {
-  const [isAddIPModalOpen, setIsAddIPModalOpen] = React.useState(false);
-
   const displayedIPGeoData = useIPGeoStore((state) => state.displayedIPGeoData);
   const displayingIPGeoData = useIPGeoStore((state) => state.displayingIPGeoData);
   const displayingIPGeoDataError = useIPGeoStore((state) => state.displayingIPGeoDataError);
@@ -44,7 +42,6 @@ function Home() {
         <div className='flex-1 flex items-center gap-2 justify-end'>
           <SearchDialog triggerButton={
             <Button
-              onClick={() => setIsAddIPModalOpen(true)}
               className="gap-2 hover:bg-primary hover:text-primary-foreground cursor-pointer"
               variant={'outline'}
             >
@@ -54,7 +51,6 @@ function Home() {
           } />
           <IPHistoryDialog triggerButton={
             <Button
-              onClick={() => setIsAddIPModalOpen(true)}
               className="gap-2 hover:bg-primary hover:text-primary-foreground cursor-pointer"
               variant={'outline'}
             >
