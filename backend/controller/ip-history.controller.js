@@ -5,24 +5,10 @@ import { getUserIdFromCookie } from "../util/getUserIdFromCookie.js";
 
 export const addIPToHistory = async (req, res) => {
     const { ip } = req.body;
-
     try {
         const userId = await getUserIdFromCookie(req);
-
-        // Check if already saved
-        const existingIP = await IPGeo.findOne({ ip, user: userId });
-        if (existingIP) {
-            return res.status(200).json({
-                success: true,
-                data: existingIP,
-                message: {
-                    title: "IP Already Saved",
-                    suggestion: "This IP address is already in your history."
-                }
-            });
-        }
-
-        // Validate IP
+        
+        // Validate IP first
         if (!isIP(ip)) {
             return res.status(400).json({
                 success: false,
@@ -32,11 +18,11 @@ export const addIPToHistory = async (req, res) => {
                 }
             });
         }
-
+        
         // Fetch geo data
         const response = await axios.get(`https://ipwho.is/${ip}`);
         const ipGeoJson = response.data;
-
+        
         if (!ipGeoJson.success) {
             return res.status(400).json({
                 success: false,
@@ -46,20 +32,27 @@ export const addIPToHistory = async (req, res) => {
                 }
             });
         }
-
-        // Save to DB
+        
+        // Check if IP already exists and delete it
+        const existingIP = await IPGeo.findOne({ ip, user: userId });
+        if (existingIP) {
+            await IPGeo.deleteOne({ _id: existingIP._id });
+        }
+        
+        // Save new record to DB
         const newIPGeo = new IPGeo({ ...ipGeoJson, user: userId });
         await newIPGeo.save();
-
+        
         res.status(201).json({
             success: true,
             data: newIPGeo,
             message: {
                 title: "IP Added",
-                suggestion: "The IP address has been added to your history."
+                suggestion: existingIP 
+                    ? "The IP address has been updated in your history."
+                    : "The IP address has been added to your history."
             }
         });
-
     } catch (error) {
         if (error.message?.includes('Unauthorized')) {
             return res.status(401).json({
